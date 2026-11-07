@@ -60,3 +60,9 @@ Everything you change in the admin page (settings, prayer times, slides, **wallp
 - Anyone can *view* the display, but only someone with the `ADMIN_TOKEN` can change anything on the server.
 - Running locally (`npx serve .`) has no `/api`, so everything stays in the browser exactly as before. To test with the API locally use `npx vercel dev`.
 - Display pages check for changes every 60 seconds and reload when something changed.
+
+## ACJU prayer times (Zone 04 — Mannar & Puttalam)
+Admin → Prayer Times → *Prayer Time Mode* → **ACJU / Bulk Table** → **Load ACJU Mannar / Puttalam (Zone 04)**.
+The timetable (from https://www.acju.lk/prayer-times/) is in `data/acju-zone04-mannar-puttalam.txt`. It has no year, so it repeats every year, including 29 Feb.
+For another zone, open that zone's monthly PDF on the ACJU page, copy its text, paste it into the box and press *Add / Update* (ACJU PDF text imports as-is).
+Choose **Shafi'i** or **Hanafi** Asr in the same panel. Re-check the ACJU page each year in case they publish changes.

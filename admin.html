@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – Masjid Display System</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================
+     LOGIN SCREEN
+     ================================================================ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🕌</div>
+    <div class="login-title">Admin Dashboard</div>
+    <div class="login-subtitle">Masjid Display System — Enter PIN to continue</div>
+    <div class="login-pin-display">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+    <div class="pin-keypad">
+      <button class="pin-key" data-val="1">1</button>
+      <button class="pin-key" data-val="2">2</button>
+      <button class="pin-key" data-val="3">3</button>
+      <button class="pin-key" data-val="4">4</button>
+      <button class="pin-key" data-val="5">5</button>
+      <button class="pin-key" data-val="6">6</button>
+      <button class="pin-key" data-val="7">7</button>
+      <button class="pin-key" data-val="8">8</button>
+      <button class="pin-key" data-val="9">9</button>
+      <button class="pin-key" data-val="clear">CLR</button>
+      <button class="pin-key" data-val="0">0</button>
+      <button class="pin-key danger" data-val="back">⌫</button>
+    </div>
+    <div id="loginError"></div>
+    <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px">Default PIN: 1234</p>
+  </div>
+</div>
+
+<!-- ================================================================
+     ADMIN APP
+     ================================================================ -->
+<div id="adminApp">
+
+  <!-- Header -->
+  <header id="adminHeader">
+    <div class="admin-logo">🕌</div>
+    <div>
+      <div class="admin-header-title">Masjid Display — Admin Dashboard</div>
+      <div class="admin-header-subtitle">Masjidur Rahman Jummah Masjid · SoftSoLab</div>
+    </div>
+    <div class="admin-header-actions">
+      <span class="network-status">🟢 Online</span>
+      <button class="btn btn-secondary btn-sm" id="openDisplayBtn">📺 Open Display</button>
+      <a href="index.html" class="btn btn-ghost btn-sm">← Back to Display</a>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <!-- Sidebar Nav -->
+    <nav id="adminNav">
+      <div class="nav-section-title">Setup</div>
+      <div class="nav-item active" data-section="general"><span class="nav-icon">⚙️</span>General</div>
+      <div class="nav-item" data-section="mosque"><span class="nav-icon">🕌</span>Mosque Info</div>
+
+      <div class="nav-section-title">Prayer</div>
+      <div class="nav-item" data-section="prayers"><span class="nav-icon">🕐</span>Prayer Times</div>
+      <div class="nav-item" data-section="iqamah"><span class="nav-icon">⏱️</span>Iqamah Settings</div>
+      <div class="nav-item" data-section="athan"><span class="nav-icon">📢</span>Athan Screen</div>
+
+      <div class="nav-section-title">Special</div>
+      <div class="nav-item" data-section="jummah"><span class="nav-icon">🌙</span>Jummah Mode</div>
+
+      <div class="nav-section-title">Content</div>
+      <div class="nav-item" data-section="slides"><span class="nav-icon">📖</span>Hadith & Slides</div>
+      <div class="nav-item" data-section="announce"><span class="nav-icon">📋</span>Announcements</div>
+      <div class="nav-item" data-section="ticker"><span class="nav-icon">📡</span>Bottom Ticker</div>
+
+      <div class="nav-section-title">Appearance</div>
+      <div class="nav-item" data-section="wallpaper"><span class="nav-icon">🖼️</span>Wallpapers</div>
+      <div class="nav-item" data-section="clock"><span class="nav-icon">🕰️</span>Clock Settings</div>
+      <div class="nav-item" data-section="layout"><span class="nav-icon">📐</span>Layout & Sizes</div>
+      <div class="nav-item" data-section="colours"><span class="nav-icon">🎨</span>Colours & Themes</div>
+
+      <div class="nav-section-title">System</div>
+      <div class="nav-item" data-section="backup"><span class="nav-icon">💾</span>Backup & Restore</div>
+      <div class="nav-item" data-section="advanced"><span class="nav-icon">🔧</span>Advanced</div>
+    </nav>
+
+    <!-- Content Area -->
+    <div id="adminContent">
+
+      <!-- ==================== GENERAL ==================== -->
+      <div class="admin-section active" id="section-general">
+        <div class="section-header">
+          <h2>⚙️ General Settings</h2>
+          <p>Configure timezone, prayer mode, and cache settings.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🕐 Time & Region</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Timezone</label>
+              <select class="form-control" id="settingTimezone">
+                <option value="Asia/Colombo">Asia/Colombo (Sri Lanka, +5:30)</option>
+                <option value="Asia/Kolkata">Asia/Kolkata (India, +5:30)</option>
+                <option value="Asia/Riyadh">Asia/Riyadh (Saudi Arabia, +3:00)</option>
+                <option value="Asia/Dubai">Asia/Dubai (UAE, +4:00)</option>
+                <option value="Asia/Kuala_Lumpur">Asia/Kuala_Lumpur (Malaysia, +8:00)</option>
+                <option value="Asia/Singapore">Asia/Singapore (+8:00)</option>
+                <option value="Asia/Dhaka">Asia/Dhaka (Bangladesh, +6:00)</option>
+                <option value="Asia/Karachi">Asia/Karachi (Pakistan, +5:00)</option>
+                <option value="Africa/Cairo">Africa/Cairo (Egypt, +2:00)</option>
+                <option value="Europe/London">Europe/London (UK)</option>
+                <option value="America/New_York">America/New_York (US East)</option>
+                <option value="America/Chicago">America/Chicago (US Central)</option>
+                <option value="America/Los_Angeles">America/Los_Angeles (US West)</option>
+                <option value="Australia/Sydney">Australia/Sydney (+10/11)</option>
+                <option value="UTC">UTC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Time Format</label>
+              <select class="form-control" id="settingTimeFormat">
+                <option value="12h">12-Hour (AM/PM)</option>
+                <option value="24h">24-Hour</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prayer Data Mode</label>
+              <select class="form-control" id="settingPrayerMode">
+                <option value="manual">Manual Entry</option>
+                <option value="auto">Auto Calculate</option>
+                <option value="table">ACJU / Bulk Table</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Cache Duration (days)</label>
+              <input class="form-control" type="number" id="settingCacheDays" min="1" max="365" value="30">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveGeneralBtn">💾 Save General Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MOSQUE INFO ==================== -->
+      <div class="admin-section" id="section-mosque">
+        <div class="section-header">
+          <h2>🕌 Mosque Information</h2>
+          <p>Set mosque name, address, logo and contact details.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🏛️ Mosque Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mosque Name (English)</label>
+              <input class="form-control" type="text" id="mosqueNameInput" placeholder="Masjidur Rahman - Jummah Masjid">
+            </div>
+            <div class="form-group">
+              <label>Mosque Name (Arabic)</label>
+              <input class="form-control" type="text" id="mosqueNameArabicInput" placeholder="مسجد الرحمن" dir="rtl">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Address</label>
+              <input class="form-control" type="text" id="mosqueAddressInput" placeholder="Moor Street, Mannar, Sri Lanka">
+            </div>
+            <div class="form-group">
+              <label>Contact Number</label>
+              <input class="form-control" type="text" id="mosquePhoneInput" placeholder="077 642 1040">
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🖼️ Mosque Logo</div>
+          <div class="two-col">
+            <div class="upload-area">
+              <input type="file" id="logoUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">Click to upload mosque logo</div>
+              <div class="upload-hint">JPG, PNG or WebP · Max 5MB</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;padding:16px">
+              <img id="logoPreview" src="" alt="Logo Preview" style="display:none;max-height:120px;border-radius:12px;border:2px solid rgba(200,151,42,0.4)">
+              <div id="logoPreviewEmpty" style="color:rgba(255,255,255,0.3);font-size:14px">No logo uploaded</div>
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveMosqueBtn">💾 Save Mosque Info</button>
+        </div>
+      </div>
+
+      <!-- ==================== PRAYER TIMES ==================== -->
+      <div class="admin-section" id="section-prayers">
+        <div class="section-header">
+          <h2>🕐 Prayer Times</h2>
+          <p>Manage prayer times manually or use automatic calculation.</p>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">⚙️ Prayer Mode</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prayer Time Mode</label>
+              <select class="form-control" id="prayerMode">
+                <option value="manual">Manual Entry</option>
+                <option value="auto">Automatic Calculation</option>
+                <option value="table">ACJU / Bulk Table (paste a yearly timetable)</option>
+              </select>
+            </div>
+          </div>
+          <div id="bulkPrayerPanel" style="display:none">
+            <p class="text-muted mb-8" style="font-size:12px">Paste the whole year's Athan times, <b>one line per day</b>, in this order:<br><code>Date, Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha</code><br><b>ACJU PDFs paste as they are</b> (<code>1-Jan 5:02 AM 6:25 AM 12:16 PM 3:36 PM 4:28 PM 6:06 PM 7:20 PM</code> — with both Asr columns; pick Shafi'i or Hanafi below). Commas, tabs or spaces all work, so you can paste straight from Excel / a PDF table. Dates: <code>31/01/2027</code>, <code>2027-01-31</code>, <code>31 Jan</code> or just <code>31/01</code> (day/month — repeats every year). Times: <code>04:46</code> or <code>4:46 AM</code>; if there is no AM/PM, Dhuhr 1–9 and Asr, Maghrib, Isha are read as afternoon/evening (3:15 → 15:15). Today's Iqamah = that day's Athan + the minutes set for each prayer below.</p>
+            <div class="form-row"><div class="form-group"><label>Asr time to use (when the table has both)</label><select class="form-control" id="tableAsrSel"><option value="shafi">Shafi'i (ACJU Asr-Shafie)</option><option value="hanafi">Hanafi (ACJU Asr-Hanafi)</option></select></div></div>
+            <div class="form-group"><textarea class="form-control" id="bulkTimesInput" rows="9" style="font-family:monospace;font-size:13px" placeholder="01/01/2027,04:46,06:02,12:08,15:14,18:13,19:23&#10;02/01/2027,04:47,06:03,12:08,15:15,18:14,19:24"></textarea></div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="bulkAcjuBtn">🕌 Load ACJU Mannar / Puttalam (Zone 04)</button>
+              <button class="btn btn-primary" id="bulkAddBtn">➕ Add / Update these days</button>
+              <button class="btn btn-secondary" id="bulkReplaceBtn">♻️ Replace whole table</button>
+              <label class="btn btn-secondary" style="margin:0;cursor:pointer">📂 Load .csv / .txt<input type="file" id="bulkFileInput" accept=".csv,.txt,text/plain,text/csv" style="display:none"></label>
+              <button class="btn btn-secondary" id="bulkDownloadBtn">⬇️ Download template / current table</button>
+              <button class="btn btn-danger" id="bulkClearBtn">🗑 Clear table</button>
+            </div>
+            <div id="bulkStatus" class="text-muted" style="margin-top:10px;font-size:13px"></div>
+          </div>
+          <div id="autoPrayerPanel" style="display:none">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Calculation Method</label>
+                <select class="form-control" id="calcMethodSel">
+                  <option value="0">Karachi (HEF)</option>
+                  <option value="1" selected>ISNA</option>
+                  <option value="2">MWL</option>
+                  <option value="3">Makkah (UMM)</option>
+                  <option value="4">Egypt</option>
+                  <option value="7">Gulf Region</option>
+                  <option value="8">Kuwait</option>
+                  <option value="9">Qatar</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Asr Calculation</label>
+                <select class="form-control" id="asrMethodSel">
+                  <option value="0">Standard (Shafi'i)</option>
+                  <option value="1">Hanafi</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Latitude</label>
+                <input class="form-control" type="number" step="0.0001" id="latInput" placeholder="8.9833">
+              </div>
+              <div class="form-group">
+                <label>Longitude</label>
+                <input class="form-control" type="number" step="0.0001" id="lngInput" placeholder="79.9000">
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-secondary" id="fetchPrayersBtn">🔄 Calculate & Cache 30 Days</button>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="savePrayerModeBtn">💾 Save Mode Settings</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="card-title">🕌 Prayer Schedule</div>
+          <p class="text-muted mb-16">Edit individual prayer names, Athan times and Iqamah times. Set the <b>minutes after Athan</b> for each prayer and the Iqamah time follows the Athan automatically (in auto mode too); or type an Iqamah time and the minutes are worked out for you.</p>
+          <table class="prayer-admin-table">
+            <thead>
+              <tr>
+                <th>On</th>
+                <th>Prayer Name</th>
+                <th>Arabic Name</th>
+                <th>Athan Time</th>
+                <th>Iqamah after Athan (min)</th>
+                <th>Iqamah Time</th>
+              </tr>
+            </thead>
+            <tbody id="prayerTableBody">
+              <!-- filled by JS -->
+            </tbody>
+          </table>
+          <p class="text-muted mt-8" style="font-size:11px">Changes auto-save as you type.</p>
+        </div>
+      </div>
+
+      <!-- ==================== IQAMAH ==================== -->
+      <div class="admin-section" id="section-iqamah">
+        <div class="section-header">
+          <h2>⏱️ Iqamah Countdown Settings</h2>
+          <p>The "Towards Iqamah" screen counts down to each prayer's Iqamah time (set in <b>Prayer Times</b>).</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⏳ Towards Iqamah Screen</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Show countdown in the last (minutes)</label>
+              <input class="form-control" type="number" id="iqamahLeadInput" value="5" min="1" max="60">
+            </div>
+            <div class="form-group">
+              <label>"Iqamah" screen stays for (seconds)</label>
+              <input class="form-control" type="number" id="iqamahScreenSecInput" value="60" min="0" max="900">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Scrolling messages (one per line)</label>
+            <textarea class="form-control" id="iqamahMessagesInput" rows="4" placeholder="Turn off communication device or use silent mode"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveIqamahBtn">💾 Save Iqamah Settings</button>
+            <button class="btn btn-secondary" id="previewIqamahBtn">👁 Preview (Ctrl+Shift+3 on display)</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🧱 Straighten the Rows Picture (after Iqamah)</div>
+          <p class="text-muted mb-8">Shown full-screen right after the "Iqamah" screen while the prayer is being performed. On Fridays the Jummah picture is shown earlier, right after the Jummah Athan (see Jummah Mode).</p>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show the picture after Iqamah</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="shafEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-row mt-8">
+            <div class="form-group">
+              <label>Show for (minutes)</label>
+              <input class="form-control" type="number" id="shafMinutesInput" value="10" min="1" max="60">
+            </div>
+          </div>
+          <p class="text-muted mb-8">Picture (leave empty to use the built-in one)</p>
+          <div class="upload-area">
+            <input type="file" id="shafImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+            <div class="upload-icon">🧱</div>
+            <div class="upload-text">Upload your own "straighten the rows" picture</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveShafBtn">💾 Save Picture Settings</button>
+            <button class="btn btn-secondary" id="resetShafImageBtn">↩ Use built-in picture</button>
+            <button class="btn btn-secondary" onclick="window.open('index.html?demo=shaf&freeze','_blank')">👁 Preview</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CLOCK ==================== -->
+      <div class="admin-section" id="section-clock">
+        <div class="section-header">
+          <h2>🕰️ Clock Settings</h2>
+          <p>Configure the analog and digital clock appearance.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⚙️ Clock Options</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Enable Clock</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="clockEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show Analog Clock</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="analogClockEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show Digital Clock</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="digitalClockEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📐 Clock Dimensions</div>
+          <div class="form-group mb-16">
+            <label>Clock Diameter: <span id="clockDiameterVal">540px</span></label>
+            <div class="range-group">
+              <input type="range" id="clockDiameterInput" min="250" max="760" value="540">
+              <span class="range-value" id="clockDiameterValAlt">380</span>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🎨 Clock Colours</div>
+          <div class="form-row">
+            <div class="form-group"><label>Hand Colour</label><input type="color" id="clockHandColorPicker" value="#c8972a"></div>
+            <div class="form-group"><label>Number Colour</label><input type="color" id="clockNumberColorPicker" value="#ffffff"></div>
+            <div class="form-group"><label>Border Colour</label><input type="color" id="clockBorderColorPicker" value="#c8972a"></div>
+            <div class="form-group"><label>Background</label><input type="color" id="clockBgColorPicker" value="#0a1e3c"></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📅 Dates & Display</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hijri date adjustment (days, −2 … +2)</label>
+              <input class="form-control" type="number" id="hijriOffsetInput" value="0" min="-2" max="2">
+            </div>
+            <div class="form-group">
+              <label>Sunrise range (minutes shown after sunrise)</label>
+              <input class="form-control" type="number" id="sunriseRangeInput" value="15" min="0" max="60">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Photo-only pause between slides (seconds)</label>
+              <input class="form-control" type="number" id="slideGapInput" value="25" min="0" max="600">
+            </div>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show next-prayer countdown pill</div><div class="text-muted" style="font-size:12px">Off = the slides use that space. On = the pill (and the big countdown in Table / Minimal layouts) is shown.</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="nextPillCheck"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="card-title" style="margin-top:18px">🔠 Slide Fonts</div>
+          <p class="text-muted mb-8" style="font-size:12px">Size of the text on the <b>Time</b> slide and the <b>Next Prayer</b> slide (100% = default).</p>
+          <div class="form-row">
+            <div class="form-group"><label>Time slide — clock digits: <span id="csTimeVal">100%</span></label><input type="range" id="csTimeScaleInput" min="50" max="200" step="5" value="100"></div>
+            <div class="form-group"><label>Time slide — date &amp; hijri: <span id="csDateVal">100%</span></label><input type="range" id="csDateScaleInput" min="50" max="200" step="5" value="100"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Next prayer — name: <span id="npNameVal">100%</span></label><input type="range" id="npNameScaleInput" min="50" max="200" step="5" value="100"></div>
+            <div class="form-group"><label>Next prayer — Athan / Iqamah times: <span id="npTimeVal">100%</span></label><input type="range" id="npTimeScaleInput" min="50" max="200" step="5" value="100"></div>
+            <div class="form-group"><label>Next prayer — countdown: <span id="npCountVal">100%</span></label><input type="range" id="npCountScaleInput" min="50" max="200" step="5" value="100"></div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveClockBtn">💾 Save Clock Settings</button>
+        </div>
+      </div>
+
+      <!-- ==================== ATHAN SCREEN ==================== -->
+      <div class="admin-section" id="section-athan">
+        <div class="section-header">
+          <h2>📢 Athan Screen Settings</h2>
+          <p>Configure the full-screen Athan notification display.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⚙️ Athan Options</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>"Time to Athan" screen starts (minutes before, 0 = off)</label>
+              <input class="form-control" type="number" id="preAthanInput" value="5" min="0" max="60">
+            </div>
+            <div class="form-group">
+              <label>"Time to Athan" style</label>
+              <select class="form-control" id="athanStyleSel">
+                <option value="progress">Progress bar</option>
+                <option value="globe">Animated globe (Makkah → this Masjid)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Display Duration (seconds)</label>
+              <input class="form-control" type="number" id="athanDurationInput" value="120" min="30" max="600">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Athan Message</label>
+              <input class="form-control" type="text" id="athanMessageInput" placeholder="Come to Prayer!">
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🖼️ Athan Background</div>
+          <div class="upload-area">
+            <input type="file" id="athanBgUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+            <div class="upload-icon">🌙</div>
+            <div class="upload-text">Upload custom Athan background</div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🔊 Athan Audio (Optional)</div>
+          <div class="upload-area">
+            <input type="file" id="athanAudioUpload" accept="audio/*">
+            <div class="upload-icon">🎵</div>
+            <div class="upload-text">Upload Athan audio file</div>
+            <div class="upload-hint">MP3, WAV, OGG supported</div>
+          </div>
+          <p class="text-muted mt-8" style="font-size:11px">⚠️ Audio autoplay may require user interaction on some browsers.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveAthanBtn">💾 Save Athan Settings</button>
+          <button class="btn btn-secondary" id="previewAthanBtn">👁 Preview (Ctrl+Shift+T on display)</button>
+          <button class="btn btn-ghost" id="testAthanAudioBtn">🎵 Test Audio</button>
+        </div>
+      </div>
+
+      <!-- ==================== JUMMAH ==================== -->
+      <div class="admin-section" id="section-jummah">
+        <div class="section-header">
+          <h2>🌙 Jummah Mode</h2>
+          <p>Configure Friday special display mode.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⚙️ Jummah Options</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Enable Jummah Mode</div><div class="toggle-desc">Show Jummah screen on Fridays</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="jummahEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Auto-activate on Friday</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="jummahAutoMode" checked><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📋 Jummah Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Jummah Greeting Message</label>
+              <input class="form-control" type="text" id="jummahMessageInput" placeholder="JUMMAH MUBARAK">
+            </div>
+            <div class="form-group">
+              <label>Khutbah Topic</label>
+              <input class="form-control" type="text" id="jummahTopicInput" placeholder="Weekly Khutbah Topic">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Khateeb / Sheikh Name</label>
+              <input class="form-control" type="text" id="jummahKhateebInput" placeholder="Ash-Sheikh Name">
+            </div>
+            <div class="form-group">
+              <label>Name shown in the prayer list on Fridays</label>
+              <input class="form-control" type="text" id="jummahNameInput" placeholder="Jummah">
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🕐 Jummah Times</div>
+          <p class="text-muted mb-8">On Fridays <b>Luhar is replaced by Jummah</b> in the prayer list, using the Jummah Prayer time and Iqamah time below (edit them any week).</p>
+          <div class="form-row">
+            <div class="form-group"><label>Khutbah Start Time</label><input class="form-control" type="time" id="jummahKhutbahInput"></div>
+            <div class="form-group"><label>Jummah Prayer (Athan) Time</label><input class="form-control" type="time" id="jummahTimeInput"></div>
+            <div class="form-group"><label>Jummah Iqamah Time</label><input class="form-control" type="time" id="jummahIqamahInput"></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🖼️ Jummah Background & Speaker Photo</div>
+          <div class="two-col">
+            <div>
+              <p class="text-muted mb-8">Jummah Background</p>
+              <div class="upload-area">
+                <input type="file" id="jummahBgUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+                <div class="upload-icon">🌙</div>
+                <div class="upload-text">Upload Jummah background</div>
+              </div>
+            </div>
+            <div>
+              <p class="text-muted mb-8">Khateeb Photo</p>
+              <div class="upload-area">
+                <input type="file" id="khateebPhotoUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+                <div class="upload-icon">👤</div>
+                <div class="upload-text">Upload Khateeb's photo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🕌 Jummah Picture (while Jummah is performed)</div>
+          <p class="text-muted mb-8">Shown full-screen right after the Jummah Athan screen. After the Iqamah, the normal "straighten the rows" picture is shown. If no Jummah picture is uploaded, the straighten-the-rows picture is used here too.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Show for (minutes after Jummah Athan, 0 = off)</label>
+              <input class="form-control" type="number" id="jummahImageMinutesInput" value="20" min="0" max="120">
+            </div>
+          </div>
+          <div class="upload-area">
+            <input type="file" id="jummahImageUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+            <div class="upload-icon">🕌</div>
+            <div class="upload-text">Upload the Jummah picture</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" id="resetJummahImageBtn">↩ Remove Jummah picture</button>
+            <button class="btn btn-secondary" onclick="window.open('index.html?demo=shaf&jummah&freeze','_blank')">👁 Preview</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveJummahBtn">💾 Save Jummah Settings</button>
+          <button class="btn btn-secondary" onclick="window.open('index.html','_blank');alert('Use Ctrl+Shift+P to preview Jummah mode.')">👁 Preview Jummah (Ctrl+Shift+P)</button>
+        </div>
+      </div>
+
+      <!-- ==================== WALLPAPERS ==================== -->
+      <div class="admin-section" id="section-wallpaper">
+        <div class="section-header">
+          <h2>🖼️ Wallpaper Management</h2>
+          <p>Upload and manage background images for the display.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📤 Upload Wallpaper</div>
+          <div class="upload-area">
+            <input type="file" id="wallpaperUpload" accept="image/jpeg,image/jpg,image/png,image/webp">
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-text">Click or drag to upload wallpaper</div>
+            <div class="upload-hint">JPG, JPEG, PNG, WebP · Stored offline in IndexedDB</div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🎚️ Background Settings</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Background Opacity: <span id="bgOpacityVal">1</span></label>
+              <div class="range-group">
+                <input type="range" id="bgOpacity" min="0.1" max="1" step="0.05" value="1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Blur Effect: <span id="bgBlurVal">0px</span></label>
+              <div class="range-group">
+                <input type="range" id="bgBlur" min="0" max="20" step="1" value="0">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Dark Overlay: <span id="bgOverlayVal">0.5</span></label>
+              <div class="range-group">
+                <input type="range" id="bgOverlay" min="0" max="0.95" step="0.05" value="0.5">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Fit Mode</label>
+              <select class="form-control" id="bgSize">
+                <option value="cover">Cover (Fill Screen)</option>
+                <option value="contain">Contain (Fit All)</option>
+                <option value="100% 100%">Stretch</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveWallpaperBtn">💾 Save Background Settings</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📂 Image Library <span class="text-muted" style="font-weight:400;font-size:12px">(click to select as background)</span></div>
+          <div class="image-preview-grid" id="wallpaperGrid">
+            <div style="color:rgba(255,255,255,0.3);font-size:13px;padding:20px">No images uploaded yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SLIDES ==================== -->
+      <div class="admin-section" id="section-slides">
+        <div class="section-header">
+          <h2>📖 Hadith & Islamic Slides</h2>
+          <p>Manage Hadith, Quranic verses, and Islamic reminder slides.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📋 Slide Library</div>
+          <div class="btn-row" style="margin-bottom:16px">
+            <button class="btn btn-primary" id="addSlideBtn">➕ Add New Slide</button>
+          </div>
+          <div id="slideList" class="slide-list">
+            <p class="text-muted" style="text-align:center;padding:20px">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== ANNOUNCEMENTS ==================== -->
+      <div class="admin-section" id="section-announce">
+        <div class="section-header">
+          <h2>📋 Programmes & Announcements</h2>
+          <p>Schedule mosque events, lectures, and community notices.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📢 Announcements</div>
+          <div class="btn-row" style="margin-bottom:16px">
+            <button class="btn btn-primary" id="addAnnBtn">➕ Add Announcement</button>
+          </div>
+          <div id="announcementList" class="slide-list">
+            <p class="text-muted" style="text-align:center;padding:20px">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TICKER ==================== -->
+      <div class="admin-section" id="section-ticker">
+        <div class="section-header">
+          <h2>📡 Bottom Ticker</h2>
+          <p>Manage the scrolling text at the bottom of the display.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⚙️ Ticker Options</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Enable Ticker</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tickerEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Bold Text</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="tickerBold"><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-row mt-16">
+            <div class="form-group">
+              <label>Scroll Speed: <span id="tickerSpeedVal">60</span></label>
+              <div class="range-group">
+                <input type="range" id="tickerSpeed" min="10" max="200" value="60">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Font Size (px)</label>
+              <input class="form-control" type="number" id="tickerFontSizeInput" value="20" min="12" max="48">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Message Separator</label>
+              <input class="form-control" type="text" id="tickerSeparator" value="  ◆  ">
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🎨 Ticker Colours</div>
+          <div class="form-row">
+            <div class="form-group"><label>Background</label><input type="color" id="tickerBgColor" value="#050f28"></div>
+            <div class="form-group"><label>Text Colour</label><input type="color" id="tickerTextColor" value="#f0d080"></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">💬 Ticker Messages</div>
+          <div id="tickerMsgList" class="ticker-msg-list"></div>
+          <div class="btn-row">
+            <button class="btn btn-secondary btn-sm" id="addTickerMsgBtn">➕ Add Message</button>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveTickerBtn">💾 Save Ticker Settings</button>
+        </div>
+      </div>
+
+      <!-- ==================== LAYOUT ==================== -->
+      <div class="admin-section" id="section-layout">
+        <div class="section-header">
+          <h2>📐 Layout & Sizes</h2>
+          <p>Sizes are relative to the default design (drag back to the middle value to reset). They apply to every screen layout.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">📏 Dimensions</div>
+          <div class="form-group mb-16">
+            <label>Sidebar Width: <span id="sidebarWidthVal">678px</span></label>
+            <div class="range-group"><input type="range" id="sidebarWidthInput" min="400" max="900" value="678"><span class="range-value"></span></div>
+          </div>
+          <div class="form-group mb-16">
+            <label>Header Height: <span id="headerHeightVal">171px</span></label>
+            <div class="range-group"><input type="range" id="headerHeightInput" min="100" max="240" value="171"><span class="range-value"></span></div>
+          </div>
+          <div class="form-group mb-16">
+            <label>Ticker Height: <span id="tickerHeightVal">86px</span></label>
+            <div class="range-group"><input type="range" id="tickerHeightInput" min="50" max="140" value="86"><span class="range-value"></span></div>
+          </div>
+          <div class="form-group mb-16">
+            <label>Prayer Font Size: <span id="prayerFontSizeVal">80px</span></label>
+            <div class="range-group"><input type="range" id="prayerFontSizeInput" min="40" max="120" value="80"><span class="range-value"></span></div>
+          </div>
+          <div class="form-group mb-16">
+            <label>Mosque Name Font Size: <span id="mosqueNameFsVal">62px</span></label>
+            <div class="range-group"><input type="range" id="mosqueNameFsInput" min="30" max="90" value="62"><span class="range-value"></span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Ticker Font Size</label><input class="form-control" type="number" id="tickerFontSizeLayout" value="42" min="20" max="80"></div>
+            <div class="form-group"><label>Date Font Size</label><input class="form-control" type="number" id="dateFontSizeInput" value="38" min="20" max="64"></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🏷️ Software Credit</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Show Credit</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="creditVisibleCheck" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-row mt-8">
+            <div class="form-group">
+              <label>Credit Position</label>
+              <select class="form-control" id="creditPositionSel">
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="bottom-center">Footer (bottom centre)</option>
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Credit Font Size</label>
+              <input class="form-control" type="number" id="creditFontSizeInput" value="14" min="8" max="20">
+            </div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveLayoutBtn">💾 Save Layout Settings</button>
+        </div>
+      </div>
+
+      <!-- ==================== COLOURS & THEMES ==================== -->
+      <div class="admin-section" id="section-colours">
+        <div class="section-header">
+          <h2>🎨 Colours & Themes</h2>
+          <p>Apply a preset theme or customise individual colours.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🖥️ Screen Layout</div>
+          <p class="text-muted mb-16">Choose how the main display is arranged. Applies instantly on the display.</p>
+          <div class="theme-grid layout-grid">
+            <div class="theme-card layout-card" data-layout="signature"><div class="theme-preview lp-signature"></div><div class="theme-name">1 · Signature</div></div>
+            <div class="theme-card layout-card" data-layout="ultrawide"><div class="theme-preview lp-ultrawide"></div><div class="theme-name">2 · Ultra Wide</div></div>
+            <div class="theme-card layout-card" data-layout="simplicity"><div class="theme-preview lp-simplicity"></div><div class="theme-name">3 · Simplicity</div></div>
+            <div class="theme-card layout-card" data-layout="classic"><div class="theme-preview lp-classic"></div><div class="theme-name">4 · Classic</div></div>
+            <div class="theme-card layout-card" data-layout="table"><div class="theme-preview lp-table"></div><div class="theme-name">5 · Table</div></div>
+            <div class="theme-card layout-card" data-layout="minimal"><div class="theme-preview lp-minimal"></div><div class="theme-name">6 · Minimal</div></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🎭 Colour Presets</div>
+          <div class="theme-grid">
+            <div class="theme-card" data-theme="islamic-blue">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0b66d0,#0a4ea6)">🕌</div>
+              <div class="theme-name">Islamic Blue</div>
+            </div>
+            <div class="theme-card" data-theme="royal-gold">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#3d2b00,#c8a000)">👑</div>
+              <div class="theme-name">Royal Gold</div>
+            </div>
+            <div class="theme-card" data-theme="emerald-green">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0a3d20,#1a6b3d)">🌿</div>
+              <div class="theme-name">Emerald Green</div>
+            </div>
+            <div class="theme-card" data-theme="modern-dark">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#121212,#2d2d2d)">🌑</div>
+              <div class="theme-name">Modern Dark</div>
+            </div>
+            <div class="theme-card" data-theme="white-gold">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#f0f0e8,#d4a843)">✨</div>
+              <div class="theme-name">White & Gold</div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🖌️ Custom Colours</div>
+          <div class="three-col">
+            <div class="form-group"><label>Primary Background</label><input type="color" id="cpPrimary" value="#1a3a5c"></div>
+            <div class="form-group"><label>Secondary / Gold</label><input type="color" id="cpSecondary" value="#c8972a"></div>
+            <div class="form-group"><label>Accent Colour</label><input type="color" id="cpAccent" value="#2a6496"></div>
+            <div class="form-group"><label>Text Colour</label><input type="color" id="cpText" value="#ffffff"></div>
+            <div class="form-group"><label>Sidebar Background</label><input type="color" id="cpSidebarBg" value="#0a1e3c"></div>
+            <div class="form-group"><label>Header Background</label><input type="color" id="cpHeaderBg" value="#0a1e3c"></div>
+            <div class="form-group"><label>Active Prayer</label><input type="color" id="cpActivePrayer" value="#c8972a"></div>
+            <div class="form-group"><label>Ticker Background</label><input type="color" id="cpTickerBg" value="#050f28"></div>
+            <div class="form-group"><label>Ticker Text</label><input type="color" id="cpTickerText" value="#f0d080"></div>
+            <div class="form-group"><label>Announcement BG</label><input type="color" id="cpAnnBg" value="#0a1e3c"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveColoursBtn">💾 Save Custom Colours</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== BACKUP ==================== -->
+      <div class="admin-section" id="section-backup">
+        <div class="section-header">
+          <h2>💾 Backup & Restore</h2>
+          <p>Export or import all settings, slides, and prayer times.</p>
+        </div>
+        <div class="two-col">
+          <div class="admin-card">
+            <div class="card-title">📤 Export Backup</div>
+            <p class="text-muted mb-16">Download all settings, slides, and announcements as a JSON file.</p>
+            <button class="btn btn-primary btn-lg" id="exportBackupBtn" style="width:100%">📥 Download Backup</button>
+          </div>
+          <div class="admin-card">
+            <div class="card-title">📥 Import Backup</div>
+            <p class="text-muted mb-16">Restore settings from a previously exported backup file.</p>
+            <div class="upload-area">
+              <input type="file" id="backupImport" accept=".json">
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">Click to select backup JSON file</div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">ℹ️ System Info</div>
+          <div class="form-row">
+            <div><span class="text-muted">Last Prayer Fetch: </span><span id="lastFetchDate" class="text-gold">Never</span></div>
+          </div>
+        </div>
+        <div class="admin-card" style="border-color:rgba(192,57,43,0.4)">
+          <div class="card-title" style="color:#e74c3c">⚠️ Danger Zone</div>
+          <p class="text-muted mb-16">This will reset ALL settings to factory defaults and clear all slides and announcements.</p>
+          <button class="btn btn-danger" id="resetDefaultsBtn">🔄 Reset to Factory Defaults</button>
+        </div>
+      </div>
+
+      <!-- ==================== ADVANCED ==================== -->
+      <div class="admin-section" id="section-advanced">
+        <div class="section-header">
+          <h2>🔧 Advanced Settings</h2>
+          <p>PIN security, slideshow options, and system configuration.</p>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🔐 Admin Security</div>
+          <div class="form-group">
+            <label>Admin PIN (4-8 digits)</label>
+            <input class="form-control" type="password" id="adminPinInput" placeholder="Enter new PIN" maxlength="8">
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">🎞️ Slideshow Options</div>
+          <div class="toggle-row">
+            <div><div class="toggle-label">Enable Slideshow</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="slideshowEnabled" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="form-row mt-16">
+            <div class="form-group">
+              <label>Slide Duration (ms)</label>
+              <input class="form-control" type="number" id="slideDurationInput" value="8000" min="2000" max="60000" step="500">
+            </div>
+            <div class="form-group">
+              <label>Transition Effect</label>
+              <select class="form-control" id="slideTransitionSel">
+                <option value="fade">Fade</option>
+                <option value="slide">Slide Up</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="card-title">⌨️ Keyboard Shortcuts</div>
+          <table style="width:100%;border-collapse:collapse">
+            <tr><td style="padding:6px 0;color:rgba(255,255,255,0.4);width:200px">Ctrl + Shift + A</td><td style="color:#fff">Open Admin Panel</td></tr>
+            <tr><td style="padding:6px 0;color:rgba(255,255,255,0.4)">Ctrl + Shift + P</td><td style="color:#fff">Preview Jummah Mode</td></tr>
+            <tr><td style="padding:6px 0;color:rgba(255,255,255,0.4)">Ctrl + Shift + T</td><td style="color:#fff">Preview Athan Screen</td></tr>
+            <tr><td style="padding:6px 0;color:rgba(255,255,255,0.4)">F11</td><td style="color:#fff">Toggle Full Screen</td></tr>
+          </table>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="saveAdvancedBtn">💾 Save Advanced Settings</button>
+        </div>
+      </div>
+
+    </div><!-- end adminContent -->
+  </div><!-- end admin-body -->
+</div><!-- end adminApp -->
+
+<!-- ================================================================
+     MODALS
+     ================================================================ -->
+
+<!-- Slide Modal -->
+<div class="modal-backdrop" id="slideModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Add New Slide</div>
+      <button class="modal-close" id="cancelSlideBtn">✕</button>
+    </div>
+    <input type="hidden" id="slideIdHidden">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Slide Type</label>
+        <select class="form-control" id="slideType">
+          <option value="hadith">Hadith</option>
+          <option value="quran">Quran</option>
+          <option value="reminder">Reminder</option>
+          <option value="dua">Dua</option>
+          <option value="educational">Educational</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Display Order</label>
+        <input class="form-control" type="number" id="slideOrder" value="0">
+      </div>
+      <div class="form-group">
+        <label>Duration (ms)</label>
+        <input class="form-control" type="number" id="slideItemDuration" value="8000" min="2000" step="500">
+      </div>
+    </div>
+    <div class="form-group mb-16">
+      <label>Arabic Text</label>
+      <textarea class="form-control" id="slideArabic" rows="3" dir="rtl" placeholder="Arabic text (optional)"></textarea>
+    </div>
+    <div class="form-group mb-16">
+      <label>English Translation / Content</label>
+      <textarea class="form-control" id="slideTranslation" rows="3" placeholder="English text"></textarea>
+    </div>
+    <div class="form-group mb-16">
+      <label>Tamil Translation (optional)</label>
+      <textarea class="form-control" id="slideTamil" rows="2" placeholder="Tamil translation"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Source / Reference</label>
+        <input class="form-control" type="text" id="slideSource" placeholder="e.g., Sahih al-Bukhari, Hadith 1">
+      </div>
+      <div class="form-group">
+        <label>Background Colour</label>
+        <input type="color" id="slideBgColor" value="#0a1e3c">
+      </div>
+    </div>
+    <div class="toggle-row mb-16">
+      <div class="toggle-label">Enabled</div>
+      <label class="toggle-switch"><input type="checkbox" id="slideEnabled" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveSlideBtn">💾 Save Slide</button>
+      <button class="btn btn-ghost" id="cancelSlideBtn2" onclick="document.getElementById('slideModal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Announcement Modal -->
+<div class="modal-backdrop" id="announcementModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Add Announcement</div>
+      <button class="modal-close" id="cancelAnnBtn">✕</button>
+    </div>
+    <input type="hidden" id="annIdHidden">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Programme Title *</label>
+        <input class="form-control" type="text" id="annTitle" placeholder="e.g., Weekly Islamic Lecture">
+      </div>
+      <div class="form-group">
+        <label>Priority (0=normal, 5=high)</label>
+        <input class="form-control" type="number" id="annPriority" value="0" min="0" max="10">
+      </div>
+    </div>
+    <div class="form-group mb-16">
+      <label>Description</label>
+      <textarea class="form-control" id="annDescription" rows="3" placeholder="Programme details and description"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input class="form-control" type="date" id="annDate"></div>
+      <div class="form-group"><label>Time</label><input class="form-control" type="time" id="annTime"></div>
+      <div class="form-group"><label>Speaker / Contact</label><input class="form-control" type="text" id="annSpeaker" placeholder="Speaker name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Start Date (show from)</label><input class="form-control" type="date" id="annStartDate"></div>
+      <div class="form-group"><label>Expiry Date (auto remove)</label><input class="form-control" type="date" id="annExpiryDate"></div>
+    </div>
+    <div class="toggle-row mb-16">
+      <div class="toggle-label">Enabled</div>
+      <label class="toggle-switch"><input type="checkbox" id="annEnabled" checked><span class="toggle-slider"></span></label>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveAnnBtn">💾 Save Announcement</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('announcementModal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
+
+<!-- Scripts -->
+<script src="js/storage.js"></script>
+<script src="js/prayer-times.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

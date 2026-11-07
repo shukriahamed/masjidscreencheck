@@ -7,7 +7,7 @@
  * Run with: npx serve . OR python -m http.server 8080
  */
 
-const CACHE_NAME  = 'masjid-display-v6';
+const CACHE_NAME  = 'masjid-display-v8';
 const STATIC_ASSETS = [
   './',
   './index.html',
