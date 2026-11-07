@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="islamic-blue" data-layout="signature">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Masjid Digital Display System — SoftSoLab">
+  <meta name="theme-color" content="#0a4aa0">
+  <title>Masjidur Rahman — Digital Display</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/icons/mosque-icon.svg">
+
+  <!-- Fonts: loaded from Google Fonts when online. Everything falls back to
+       system fonts, so the display still works fully offline. To make the
+       fonts offline too, drop the .woff2 files into assets/fonts/ (see README). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Open+Sans:wght@400;600;700;800&family=Oswald:wght@500;600;700&display=swap">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layouts.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Apply saved theme + layout before first paint to prevent a flash -->
+  <script>
+    try {
+      var s = JSON.parse(localStorage.getItem('masjidSettings') || '{}');
+      if (s.theme)  document.documentElement.setAttribute('data-theme', s.theme);
+      if (s.layout) document.documentElement.setAttribute('data-layout', s.layout);
+    } catch(e) {}
+  </script>
+</head>
+<body>
+
+  <!-- The whole display is designed on a 1920x1080 canvas that is scaled to
+       fit any screen (see fitStage() in app.js). -->
+  <div id="stage">
+    <div id="frame">
+      <div id="frameInner">
+
+        <!-- ─── BACKGROUND ─────────────────────────────── -->
+        <div id="mainBackground"></div>
+        <div id="bgOverlay"></div>
+
+        <!-- ─── HEADER ─────────────────────────────────── -->
+        <header id="mainHeader">
+          <img id="mosqueLogo" src="assets/images/default-logo.svg" alt="Mosque logo">
+          <div class="mosque-title-block">
+            <div id="mosqueName"><span class="n1">Masjidur</span> <span class="n2">Rahman</span></div>
+            <div id="mosqueAddress">Moor Street, Mannar. Tel. 077-6421040</div>
+          </div>
+          <div class="header-icon" aria-hidden="true">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+              <!-- crescent + star -->
+              <path d="M52 8 a24 24 0 1 0 22 33 a19 19 0 1 1 -22 -33 z" fill="currentColor"/>
+              <path d="M70 14 l2.6 6.4 6.9.4 -5.4 4.3 1.8 6.7 -5.9 -3.8 -5.9 3.8 1.8 -6.7 -5.4 -4.3 6.9 -.4z" fill="currentColor"/>
+              <!-- pointed-arch doorway -->
+              <path d="M14 118 V74 C14 58 33 50 50 40 C67 50 86 58 86 74 V118 Z" fill="currentColor"/>
+              <path d="M34 118 V82 C34 74 42 70 50 64 C58 70 66 74 66 82 V118 Z" fill="var(--header-icon-cut, #4a6585)"/>
+              <path d="M44 118 V90 C44 86 47 84 50 82 C53 84 56 86 56 90 V118 Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </header>
+
+        <!-- ─── DATE BAR ───────────────────────────────── -->
+        <div id="dateBar">
+          <span class="date-dot"></span>
+          <span id="gregorianDate">Loading date…</span>
+          <span class="date-sep">/</span>
+          <span id="hijriDate"></span>
+        </div>
+
+        <!-- ─── DIGITAL TIME (some layouts) ────────────── -->
+        <div id="digitalBox">
+          <div id="digitalClock">00:00</div>
+          <div id="digitalDate"></div>
+        </div>
+
+        <!-- ─── PRAYER TIMES ───────────────────────────── -->
+        <aside id="sidebar">
+          <div id="prayerList"></div>
+        </aside>
+
+        <!-- ─── ANALOG CLOCK ───────────────────────────── -->
+        <div id="clockSection">
+          <canvas id="analogClock" width="1080" height="1080"></canvas>
+        </div>
+
+        <!-- ─── HADITH / ANNOUNCEMENT SLIDES (over the photo) ─── -->
+        <div id="slideshowContainer"></div>
+
+        <!-- ─── NEXT PRAYER COUNTDOWN PILL ─────────────── -->
+        <div id="nextPrayerCountdown">
+          <span class="pill-cap">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="24" cy="24" r="17"/><path d="M24 13v11l7 5"/><path d="M6 12l5-5M42 12l-5-5"/>
+            </svg>
+          </span>
+          <span class="pill-text"><span id="pillName">Fajr</span> <b id="pillTime">-00:00:00</b></span>
+        </div>
+
+        <!-- ─── BIG COUNTDOWN (bar layouts) ────────────── -->
+        <div id="bigCountdown">
+          <div class="bc-label" id="bcLabel">Fajr in</div>
+          <div class="bc-time" id="bcTime">00:00:00</div>
+        </div>
+
+        <!-- ─── BOTTOM TICKER ──────────────────────────── -->
+        <div id="ticker">
+          <div class="ticker-track" id="tickerTrack">
+            <div id="tickerInner">Masjidur Rahman</div>
+          </div>
+        </div>
+
+        <!-- ===================================================
+             FULL-SCREEN SCREENS (all live inside the gold frame)
+             =================================================== -->
+        <div class="full-overlay" id="preAthanOverlay"  role="dialog" aria-label="Time to Athan"></div>
+        <div class="full-overlay" id="athanOverlay"     role="dialog" aria-label="Athan"></div>
+        <div class="full-overlay" id="iqamahOverlay"    role="dialog" aria-label="Iqamah countdown"></div>
+        <div class="full-overlay" id="shafOverlay"      role="dialog" aria-label="Straighten the rows"></div>
+        <div class="full-overlay" id="jummahOverlay"    role="dialog" aria-label="Jummah"></div>
+
+        <!-- Credit + hidden admin shortcut -->
+        <div id="softwareCredit" class="software-credit credit-top-right">
+          Powered by SoftSoLab
+        </div>
+        <button id="adminBtn" onclick="window.location.href='admin.html'"
+                title="Open Admin Panel (Ctrl+Shift+A)">⚙ Admin</button>
+
+      </div><!-- /frameInner -->
+    </div><!-- /frame -->
+  </div><!-- /stage -->
+
+  <!-- Scripts: storage first, app last -->
+  <script src="js/storage.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/prayer-times.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/globe.js"></script>
+  <script src="js/athan.js"></script>
+  <script src="js/ticker.js"></script>
+  <script src="js/slideshow.js"></script>
+  <script src="js/jummah.js"></script>
+  <script src="js/offline.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
