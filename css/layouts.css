@@ -1,0 +1,268 @@
+/**
+ * layouts.css — alternative screen layouts.
+ * "signature" (the default) lives in style.css; every block below overrides
+ * it for <html data-layout="…">.
+ *
+ *   signature  – curved sidebar + big analog clock (default)
+ *   classic    – narrower sidebar, gold clock overlapping the photo
+ *   ultrawide  – name tab on top, prayer strip + clock along the bottom
+ *   simplicity – slim sidebar, big digital time, name card bottom-right
+ *   table      – ticket-style panel with Athan / Iqamah columns
+ *   minimal    – clean photo, big countdown + one-line prayer bar
+ */
+
+/* ============================================================
+   CLASSIC
+   ============================================================ */
+[data-layout="classic"] {
+  --sb-w: calc(540px * var(--kSb));
+  --prayer-fs: calc(64px * var(--kPrayer));
+  --clock-d: calc(430px * var(--kClock));
+  --clock-ring: #7b5a12; --clock-glow: #f3d27a;
+  --clock-face-1: #16356b; --clock-face-2: #08142d;
+}
+[data-layout="classic"] #sidebar { border-radius: 0; box-shadow: 10px 0 34px rgba(0,0,0,.4); }
+[data-layout="classic"] .prayer-item { padding-left: 28px; }
+[data-layout="classic"] .p-icon { width: 76px; height: 76px; margin-right: 18px; }
+[data-layout="classic"] .p-name { font-size: 32px; }
+[data-layout="classic"] .p-iqamah { font-size: 19px; }
+[data-layout="classic"] #mainHeader { padding-left: calc(var(--sb-w) + 30px); }
+[data-layout="classic"] #clockSection {
+  left: calc(var(--sb-w) + 22px);
+  top: auto;
+  bottom: calc(var(--ticker-h) + 24px);
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,.55));
+}
+[data-layout="classic"] #nextPrayerCountdown { right: 26px; }
+
+/* ============================================================
+   ULTRAWIDE   (bottom strip, clock bottom-left, name tab top-left)
+   ============================================================ */
+[data-layout="ultrawide"] {
+  --hdr-h: calc(150px * var(--kHdr));
+  --strip-h: 188px;
+  --clock-d: calc(360px * var(--kClock));
+  --name-fs: calc(54px * var(--kName));
+  --date-fs: calc(30px * var(--kDate));
+}
+[data-layout="ultrawide"] #mainHeader {
+  right: auto; left: 0; width: 1180px;
+  padding: 0 40px 0 34px;
+  justify-content: flex-start;
+  background: linear-gradient(90deg, var(--sb-1), var(--sb-2));
+  border-bottom-right-radius: 90px;
+}
+[data-layout="ultrawide"] #mosqueLogo { height: 112px; width: 112px; }
+[data-layout="ultrawide"] .mosque-title-block { text-align: left; }
+[data-layout="ultrawide"] #mosqueAddress { font-size: 21px; }
+[data-layout="ultrawide"] .header-icon { display: none; }
+[data-layout="ultrawide"] #dateBar {
+  top: 0; left: auto; right: 0; width: 760px; height: 74px;
+  background: linear-gradient(270deg, rgba(0,0,0,.6), transparent);
+  padding-right: 36px;
+  text-shadow: 0 2px 6px rgba(0,0,0,.7);
+}
+[data-layout="ultrawide"] .date-dot { display: none; }
+[data-layout="ultrawide"] #nextPrayerCountdown { top: 86px; bottom: auto; right: 30px; height: 62px; }
+[data-layout="ultrawide"] .pill-text { font-size: 36px; line-height: 58px; }
+[data-layout="ultrawide"] .pill-cap { width: 70px; }
+[data-layout="ultrawide"] .pill-cap svg { width: 36px; height: 36px; }
+[data-layout="ultrawide"] #slideshowContainer {
+  left: 60px; right: 60px; top: 190px; bottom: calc(var(--ticker-h) + var(--strip-h) + 30px);
+}
+[data-layout="ultrawide"] .credit-top-right { top: 154px; }
+
+/* the bottom strip is shared by "ultrawide" and "minimal" */
+[data-layout="ultrawide"] #sidebar,
+[data-layout="minimal"] #sidebar {
+  top: auto; left: 0; right: 0;
+  bottom: var(--ticker-h);
+  width: auto; height: var(--strip-h);
+  border-radius: 0;
+  box-shadow: 0 -8px 30px rgba(0,0,0,.35);
+}
+[data-layout="ultrawide"] #prayerList,
+[data-layout="minimal"] #prayerList { flex-direction: row; }
+[data-layout="ultrawide"] .prayer-item,
+[data-layout="minimal"] .prayer-item {
+  flex-direction: column; justify-content: center; align-items: center;
+  padding: 0 6px;
+  border-bottom: 0;
+  border-left: 2px solid var(--sb-row-line);
+  text-align: center;
+}
+[data-layout="ultrawide"] .prayer-item:first-child,
+[data-layout="minimal"] .prayer-item:first-child { border-left: 0; }
+[data-layout="ultrawide"] .p-icon,
+[data-layout="minimal"] .p-icon { display: none; }
+[data-layout="ultrawide"] .p-main,
+[data-layout="minimal"] .p-main { align-items: center; }
+[data-layout="ultrawide"] .p-name,
+[data-layout="minimal"] .p-name { font-size: 30px; margin: 0 0 4px; font-weight: 600; }
+[data-layout="ultrawide"] .p-time,
+[data-layout="minimal"] .p-time { font-size: calc(70px * var(--kPrayer)); }
+[data-layout="ultrawide"] .p-iqamah,
+[data-layout="minimal"] .p-iqamah { align-self: center; font-size: 19px; margin-top: 6px; }
+
+[data-layout="ultrawide"] #prayerList { margin-left: 400px; }
+[data-layout="ultrawide"] #clockSection {
+  left: 14px; top: auto;
+  bottom: calc(var(--ticker-h) + 10px);
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,.6));
+}
+
+/* ============================================================
+   SIMPLICITY
+   ============================================================ */
+[data-layout="simplicity"] {
+  --sb-w: calc(430px * var(--kSb));
+  --prayer-fs: calc(62px * var(--kPrayer));
+}
+[data-layout="simplicity"] #sidebar {
+  bottom: var(--ticker-h);
+  border-radius: 0;
+  background: linear-gradient(180deg, var(--sb-1), var(--sb-2));
+  opacity: .96;
+}
+[data-layout="simplicity"] .prayer-item { padding-left: 26px; }
+[data-layout="simplicity"] .p-icon { width: 62px; height: 62px; margin-right: 20px; }
+[data-layout="simplicity"] .p-name { font-size: 28px; }
+[data-layout="simplicity"] .p-iqamah { display: none; }
+[data-layout="simplicity"] #clockSection,
+[data-layout="simplicity"] #dateBar { display: none; }
+[data-layout="simplicity"] #digitalBox {
+  display: block; top: 22px; right: 44px; text-align: right;
+  text-shadow: 0 3px 14px rgba(0,0,0,.7);
+}
+[data-layout="simplicity"] #digitalClock { font-size: 112px; font-weight: 700; }
+[data-layout="simplicity"] #digitalDate { font-size: 28px; line-height: 1.3; }
+[data-layout="simplicity"] #mainHeader {
+  left: auto; right: 30px; top: auto;
+  bottom: calc(var(--ticker-h) + 28px);
+  height: auto;
+  padding: 16px 28px 16px 20px;
+  gap: 18px;
+  background: rgba(255,255,255,.94);
+  border-radius: 18px;
+  color: #1b1f27;
+  box-shadow: 0 8px 26px rgba(0,0,0,.45);
+}
+[data-layout="simplicity"] #mosqueLogo { height: 96px; width: 96px; }
+[data-layout="simplicity"] #mosqueName { font-size: calc(46px * var(--kName)); color: #26303f; text-shadow: none; }
+[data-layout="simplicity"] #mosqueName .n1 { color: #c8972a; }
+[data-layout="simplicity"] #mosqueAddress { color: #46566e; font-size: 20px; }
+[data-layout="simplicity"] .header-icon { display: none; }
+[data-layout="simplicity"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + 200px); }
+[data-layout="simplicity"] #slideshowContainer {
+  left: calc(var(--sb-w) + 50px); top: 200px; right: 50px; bottom: calc(var(--ticker-h) + 290px);
+}
+[data-layout="simplicity"] .credit-top-right { top: auto; bottom: calc(var(--ticker-h) + 10px); left: calc(var(--sb-w) + 20px); right: auto; }
+
+/* ============================================================
+   TABLE   (ticket-style panel: Athan + Iqamah columns)
+   ============================================================ */
+[data-layout="table"] {
+  --sb-w: calc(600px * var(--kSb));
+  --prayer-fs: calc(50px * var(--kPrayer));
+  --name-fs: calc(56px * var(--kName));
+}
+[data-layout="table"] #sidebar {
+  bottom: var(--ticker-h);
+  padding-top: 218px;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(8px 0 18px rgba(0,0,0,.4));
+  -webkit-mask: radial-gradient(circle at 100% 50%, transparent 11px, #000 12px) 0 0 / 100% 38px repeat-y;
+          mask: radial-gradient(circle at 100% 50%, transparent 11px, #000 12px) 0 0 / 100% 38px repeat-y;
+}
+[data-layout="table"] #prayerList { height: calc(100% - 0px); }
+[data-layout="table"] .prayer-item { padding: 0 34px 0 26px; gap: 14px; }
+[data-layout="table"] .p-icon { width: 46px; height: 46px; margin: 0; }
+[data-layout="table"] .p-main { flex: 1; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+[data-layout="table"] .p-name { font-size: 26px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin: 0; order: 0; }
+[data-layout="table"] .p-time { order: 1; margin-left: auto; }
+[data-layout="table"] .p-iqamah { display: none; }
+[data-layout="table"] .p-iqc {
+  display: block; order: 2; min-width: 96px; text-align: right;
+  font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1;
+}
+[data-layout="table"] .p-iqc small { display: block; font-size: 12px; letter-spacing: 1.5px; font-weight: 600; opacity: .8; margin-bottom: 3px; }
+[data-layout="table"] #clockSection,
+[data-layout="table"] #dateBar { display: none; }
+[data-layout="table"] #digitalBox {
+  display: block; left: 0; top: 0; width: var(--sb-w);
+  padding: 28px 34px 0; z-index: 9;
+}
+[data-layout="table"] #digitalClock { font-size: 104px; }
+[data-layout="table"] #digitalDate { font-size: 25px; }
+[data-layout="table"] #mainHeader {
+  left: var(--sb-w); top: 0; height: 160px;
+  background: linear-gradient(270deg, rgba(0,0,0,.55), transparent);
+  box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  padding: 0 34px 0 0;
+}
+[data-layout="table"] .header-icon { display: none; }
+[data-layout="table"] #mosqueLogo { height: 104px; width: 104px; }
+[data-layout="table"] #bigCountdown {
+  display: flex; align-items: center; gap: 22px;
+  left: calc(var(--sb-w) + 34px); bottom: calc(var(--ticker-h) + 24px);
+  padding: 12px 34px 12px 24px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--pill-cap-1), var(--pill-cap-2));
+  box-shadow: 0 8px 22px rgba(0,0,0,.5);
+}
+[data-layout="table"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
+[data-layout="table"] .bc-time { font-size: 76px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+[data-layout="table"] #slideshowContainer { left: calc(var(--sb-w) + 50px); top: 190px; bottom: calc(var(--ticker-h) + 170px); }
+[data-layout="table"] .credit-top-right { top: 168px; }
+
+/* ============================================================
+   MINIMAL
+   ============================================================ */
+[data-layout="minimal"] {
+  --hdr-h: calc(140px * var(--kHdr));
+  --strip-h: 180px;
+  --name-fs: calc(52px * var(--kName));
+  --date-fs: calc(30px * var(--kDate));
+}
+[data-layout="minimal"] #mainHeader {
+  right: auto; left: 0; width: 1100px;
+  padding: 0 30px 0 34px;
+  justify-content: flex-start;
+  background: linear-gradient(90deg, rgba(0,0,0,.62), transparent);
+  box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+[data-layout="minimal"] #mosqueLogo { height: 104px; width: 104px; }
+[data-layout="minimal"] .mosque-title-block { text-align: left; }
+[data-layout="minimal"] #mosqueName { text-shadow: 0 3px 12px rgba(0,0,0,.7); }
+[data-layout="minimal"] #mosqueAddress { font-size: 21px; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+[data-layout="minimal"] .header-icon { display: none; }
+[data-layout="minimal"] #dateBar {
+  top: 0; left: auto; right: 0; width: 760px; height: 74px;
+  background: linear-gradient(270deg, rgba(0,0,0,.6), transparent);
+  padding-right: 36px; text-shadow: 0 2px 6px rgba(0,0,0,.7);
+}
+[data-layout="minimal"] .date-dot { display: none; }
+[data-layout="minimal"] #clockSection { display: none; }
+[data-layout="minimal"] #prayerList { margin-left: 470px; }
+[data-layout="minimal"] #bigCountdown {
+  display: block; left: 34px; bottom: calc(var(--ticker-h) + 22px);
+  z-index: 9;
+}
+[data-layout="minimal"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
+[data-layout="minimal"] .bc-time { font-size: 92px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 3px 0 rgba(0,0,0,.2); }
+[data-layout="minimal"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + var(--strip-h) + 24px); }
+[data-layout="minimal"] #slideshowContainer { left: 60px; right: 60px; top: 160px; bottom: calc(var(--ticker-h) + var(--strip-h) + 120px); }
+[data-layout="minimal"] .credit-top-right { top: 78px; }
+
+
+/* Signature: no crescent/mosque icon in the header — logo + name sit together,
+   name block right-aligned to the edge and vertically centred on the logo */
+[data-layout="signature"] .header-icon { display: none; }
+[data-layout="signature"] #mainHeader { padding-right: 44px; gap: 30px; }
+[data-layout="signature"] .mosque-title-block {
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+  text-align: right;
+}
+[data-layout="signature"] #mosqueName { line-height: 1.1; }
+[data-layout="signature"] #mosqueAddress { margin-top: 6px; }

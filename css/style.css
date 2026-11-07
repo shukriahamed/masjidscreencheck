@@ -1,0 +1,423 @@
+/**
+ * style.css — base display styles + the default "Signature" layout.
+ * The display is drawn on a fixed 1920 x 1080 canvas (#stage) that app.js
+ * scales to the real screen, so every size below is in canvas pixels.
+ *
+ * Other layouts live in layouts.css, palettes in themes.css and the
+ * full-screen Athan / Iqamah screens in screens.css.
+ */
+
+/* ============================================================
+   TOKENS  (k* values are unit-less scale factors set from the admin
+   "Layout & Sizes" sliders; 1 = default size)
+   ============================================================ */
+:root {
+  --kSb: 1; --kHdr: 1; --kTick: 1; --kPrayer: 1; --kName: 1; --kDate: 1; --kTickFs: 1;
+
+  --sb-w:       calc(678px * var(--kSb));
+  --hdr-h:      calc(171px * var(--kHdr));
+  --ticker-h:   calc(86px  * var(--kTick));
+  --date-h:     74px;
+  --prayer-fs:  calc(78px  * var(--kPrayer));
+  --name-fs:    calc(62px  * var(--kName));
+  --date-fs:    calc(38px  * var(--kDate));
+  --ticker-fs:  calc(42px  * var(--kTickFs));
+  --kClock: 1;
+  --clock-d:    calc(540px * var(--kClock));
+
+  --font-ui:      'Open Sans', 'Segoe UI', 'Noto Sans', 'DejaVu Sans', Arial, sans-serif;
+  --font-serif:   'Merriweather', 'Georgia', 'DejaVu Serif', serif;
+  --font-cond:    'Oswald', 'Open Sans Condensed', 'Arial Narrow', 'DejaVu Sans Condensed', Impact, sans-serif;
+  --font-arabic:  'Scheherazade New', 'Traditional Arabic', 'Amiri', 'Noto Naskh Arabic', serif;
+}
+
+/* ============================================================
+   RESET & STAGE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #04080f;
+  color: #fff;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#stage {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 1920px; height: 1080px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(var(--scale, 0.5));
+}
+
+/* Gold frame around everything */
+#frame {
+  position: absolute; inset: 0;
+  padding: 22px;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, var(--frame-1) 0%, var(--frame-2) 22%, var(--frame-1) 46%, var(--frame-2) 72%, var(--frame-1) 100%);
+  box-shadow: 0 0 0 2px rgba(0,0,0,.35), 0 10px 40px rgba(0,0,0,.6);
+}
+#frameInner {
+  position: relative;
+  width: 100%; height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a1830;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,.35);
+}
+
+/* ============================================================
+   BACKGROUND PHOTO
+   ============================================================ */
+#mainBackground {
+  position: absolute; inset: 0; z-index: 0;
+  background: #0a1830 url('../assets/images/default-bg.svg') center / cover no-repeat;
+  transition: opacity 1.2s ease;
+}
+#bgOverlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+}
+
+/* ============================================================
+   HEADER  (Signature: slate panel, logo + name right aligned)
+   ============================================================ */
+#mainHeader {
+  position: absolute; z-index: 3;
+  left: 0; right: 0; top: 0;
+  height: var(--hdr-h);
+  padding: 0 24px 0 calc(var(--sb-w) + 30px);
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 26px;
+  background: var(--hdr-bg);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.35);
+}
+
+#mosqueLogo {
+  height: 148px; width: 148px;
+  object-fit: contain;
+  border-radius: 50%;
+  flex: none;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.45));
+}
+
+.mosque-title-block { min-width: 0; text-align: right; }
+
+#mosqueName {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: var(--name-fs);
+  line-height: 1.12;
+  white-space: nowrap;
+  color: var(--name-rest);
+  text-shadow: 0 3px 0 rgba(0,0,0,.18);
+}
+#mosqueName .n1 { color: var(--name-gold); }
+
+#mosqueAddress {
+  font-size: 24px;
+  font-weight: 400;
+  margin-top: 4px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.header-icon {
+  flex: none;
+  width: 98px; height: 118px;
+  color: #fff;
+  --header-icon-cut: var(--hdr-bg-solid);
+}
+.header-icon svg { width: 100%; height: 100%; display: block; }
+
+/* ============================================================
+   DATE BAR
+   ============================================================ */
+#dateBar {
+  position: absolute; z-index: 3;
+  left: 0; right: 0;
+  top: var(--hdr-h);
+  height: var(--date-h);
+  display: flex; align-items: center; justify-content: flex-end;
+  padding-right: 30px;
+  font-size: var(--date-fs);
+  font-weight: 400;
+  white-space: nowrap;
+  background: linear-gradient(90deg, var(--date-1) 0, var(--date-1) 49%, var(--date-2) 57%, var(--date-2) 100%);
+}
+#dateBar b { font-weight: 700; }
+.date-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #15e24a;
+  box-shadow: 0 0 8px #15e24a;
+  margin-right: 18px;
+  flex: none;
+}
+.date-sep { margin: 0 12px; opacity: .9; }
+#gregorianDate, #hijriDate { font-size: inherit; }
+
+/* ============================================================
+   DIGITAL TIME  (hidden in Signature, used by other layouts)
+   ============================================================ */
+#digitalBox { display: none; position: absolute; z-index: 3; }
+#digitalClock { font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+#digitalClock small { font-size: .38em; font-weight: 700; margin-left: 6px; }
+#digitalDate { font-size: 24px; margin-top: 8px; opacity: .92; }
+
+/* ============================================================
+   PRAYER SIDEBAR  (Signature)
+   ============================================================ */
+#sidebar {
+  position: absolute; z-index: 8;
+  left: 0; top: 0; bottom: 0;
+  width: var(--sb-w);
+  background:
+    radial-gradient(rgba(255,255,255,.075) 1.3px, transparent 1.8px) 0 0 / 8px 8px,
+    linear-gradient(180deg, var(--sb-1), var(--sb-2));
+  /* curved right edge that wraps the clock */
+  border-top-right-radius: 54px 50%;
+  border-bottom-right-radius: 54px 50%;
+  box-shadow: 10px 0 34px rgba(0,0,0,.35);
+  overflow: hidden;
+}
+
+#prayerList { display: flex; flex-direction: column; height: 100%; }
+
+.prayer-item {
+  position: relative;
+  flex: 1;
+  display: flex; align-items: center;
+  padding-left: 40px;
+  border-bottom: 2px solid var(--sb-row-line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+  color: #fff;
+  transition: background .6s ease;
+}
+.prayer-item:last-child { border-bottom: 0; }
+
+.p-icon {
+  flex: none;
+  width: 94px; height: 94px;
+  margin-right: 24px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.p-icon svg { width: 100%; height: 100%; overflow: visible; }
+
+.p-main { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+
+.p-name {
+  font-size: 38px; font-weight: 400; line-height: 1;
+  margin-bottom: -4px;
+  letter-spacing: .2px;
+}
+.p-time {
+  display: flex; align-items: flex-start;
+  font-size: var(--prayer-fs);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 0 rgba(0,0,0,.18);
+}
+.p-time .ampm {
+  font-size: .27em; font-weight: 700; letter-spacing: 0;
+  margin: .14em 0 0 4px;
+}
+.p-iqamah {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 1px 8px 2px;
+  font-size: 22px; font-weight: 400;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  background: var(--iqamah-pill);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.p-iqc { display: none; }
+
+/* current prayer: filled with the active-prayer colour, glossy */
+.prayer-item.current {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.46) 0%, rgba(255,255,255,.12) 46%, rgba(0,0,0,.08) 100%),
+    var(--accent);
+  color: var(--accent-ink, #0b2150);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.75), inset 0 -3px 8px rgba(0,0,0,.22), 0 4px 18px rgba(0,0,0,.35);
+}
+.prayer-item.current .p-icon,
+.prayer-item.current .p-name,
+.prayer-item.current .p-time { color: var(--accent-ink, #0b2150); text-shadow: 0 1px 0 rgba(255,255,255,.35); }
+.prayer-item.current .p-iqamah { background: rgba(2, 22, 68, .86); color: #fff; }
+
+/* ============================================================
+   ANALOG CLOCK
+   ============================================================ */
+#clockSection {
+  position: absolute; z-index: 9;
+  width: var(--clock-d); height: var(--clock-d);
+  left: calc(var(--sb-w) - var(--clock-d) / 2 - 12px);
+  top: calc((100% - var(--clock-d)) / 2 + 8px);
+  pointer-events: none;
+}
+#analogClock { width: 100%; height: 100%; display: block; }
+
+/* ============================================================
+   COUNTDOWN PILL  (next prayer)
+   ============================================================ */
+#nextPrayerCountdown {
+  position: absolute; z-index: 6;
+  right: 26px;
+  bottom: calc(var(--ticker-h) + 22px);
+  height: 70px;
+  display: none;            /* shown by app.js */
+  align-items: stretch;
+  border-radius: 40px;
+  overflow: hidden;
+  background: #fff;
+  color: #1b1f27;
+  border: 2px solid rgba(255,255,255,.9);
+  box-shadow: 0 6px 18px rgba(0,0,0,.45);
+}
+.pill-cap {
+  width: 82px;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, var(--pill-cap-1), var(--pill-cap-2));
+  color: #fff;
+}
+.pill-cap svg { width: 44px; height: 44px; }
+.pill-text {
+  padding: 0 24px 0 20px;
+  font-size: 44px; line-height: 66px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+.pill-text b { font-weight: 700; font-variant-numeric: tabular-nums; margin-left: 6px; }
+
+#bigCountdown { display: none; position: absolute; z-index: 6; }
+
+/* ============================================================
+   HADITH / ANNOUNCEMENT SLIDES (float over the photo)
+   ============================================================ */
+#slideshowContainer {
+  position: absolute; z-index: 5;
+  left: calc(var(--sb-w) + 80px);
+  right: 44px;
+  top: calc(var(--hdr-h) + var(--date-h) + 46px);
+  bottom: calc(var(--ticker-h) + 120px);
+  pointer-events: none;
+}
+.slide-item {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 26px 44px;
+  border-radius: 22px;
+  border: 2px solid rgba(255,255,255,.22);
+  background: rgba(6,28,70,.86);
+  box-shadow: 0 14px 40px rgba(0,0,0,.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+  background-size: cover; background-position: center;
+}
+.slide-item::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(0,0,0,.35);
+  pointer-events: none;
+}
+.slide-content, .slide-announcement {
+  position: relative; z-index: 1;
+  text-align: center; width: 100%;
+}
+.slide-arabic {
+  font-family: var(--font-arabic);
+  font-size: 58px; line-height: 1.7;
+  color: var(--accent);
+  direction: rtl;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 10px rgba(0,0,0,.5);
+}
+.slide-translation { font-size: 32px; line-height: 1.45; margin-bottom: 10px; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+.slide-tamil { font-size: 26px; line-height: 1.6; color: rgba(255,255,255,.85); margin-bottom: 10px; font-family: 'Latha','Noto Sans Tamil',var(--font-ui); }
+.slide-source { font-size: 22px; color: rgba(255,255,255,.6); font-style: italic; margin-top: 10px; }
+
+.slide-announcement { display: flex; align-items: center; gap: 34px; text-align: left; }
+.slide-speaker-photo { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); flex: none; }
+.slide-ann-content { flex: 1; min-width: 0; }
+.slide-ann-title { font-size: 46px; font-weight: 800; color: var(--accent); margin-bottom: 10px; line-height: 1.1; }
+.slide-ann-desc { font-size: 30px; line-height: 1.45; margin-bottom: 14px; color: rgba(255,255,255,.92); }
+.slide-ann-meta { display: flex; gap: 30px; font-size: 24px; color: rgba(255,255,255,.7); flex-wrap: wrap; }
+
+/* ============================================================
+   BOTTOM TICKER
+   ============================================================ */
+#ticker {
+  position: absolute; z-index: 4;
+  left: 0; right: 0; bottom: 0;
+  height: var(--ticker-h);
+  background: var(--ticker-bg);
+  color: var(--ticker-text);
+  overflow: hidden;
+  display: flex; align-items: center;
+}
+.ticker-track { flex: 1; height: 100%; overflow: hidden; display: flex; align-items: center; }
+#tickerInner {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: var(--ticker-fs);
+  font-weight: 400;
+  padding: 0 20px;
+  will-change: transform;
+}
+
+/* ============================================================
+   SOFTWARE CREDIT + ADMIN BUTTON
+   ============================================================ */
+.software-credit {
+  position: absolute; z-index: 50;
+  font-size: 14px;
+  color: rgba(255,255,255,.8);
+  text-shadow: 0 1px 4px rgba(0,0,0,.8);
+  pointer-events: none;
+  letter-spacing: .4px;
+}
+.credit-bottom-right  { bottom: calc(var(--ticker-h) + 100px); right: 16px; }
+.credit-bottom-left   { bottom: calc(var(--ticker-h) + 10px);  left:  calc(var(--sb-w) + 20px); }
+/* footer: sits in the bottom edge of the ticker bar, centred */
+.credit-bottom-center { bottom: 5px; left: 50%; transform: translateX(-50%); white-space: nowrap; letter-spacing: .8px; color: rgba(255,255,255,.88); }
+[data-credit="footer"] #ticker { padding-bottom: 22px; }
+.credit-top-right     { top: calc(var(--hdr-h) + var(--date-h) + 10px); right: 16px; }
+.credit-top-left      { top: calc(var(--hdr-h) + var(--date-h) + 10px); left:  calc(var(--sb-w) + 20px); }
+
+#adminBtn {
+  position: absolute; z-index: 200;
+  left: 16px; bottom: 16px;
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.35);
+  color: rgba(255,255,255,.9);
+  font: 600 18px var(--font-ui);
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .6s ease, background .3s ease;
+}
+#adminBtn.visible { opacity: 1; }
+#adminBtn:hover { background: rgba(0,0,0,.8); }
+
+/* ============================================================
+   SHARED ANIMATION HELPERS
+   ============================================================ */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+.animate-in { animation: fadeInUp .75s cubic-bezier(.16,1,.3,1) both; }
+.arabic-text { font-family: var(--font-arabic); direction: rtl; }

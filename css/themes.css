@@ -1,0 +1,100 @@
+/**
+ * themes.css — colour palettes.
+ * A palette only sets CSS variables; the screen layout is chosen separately
+ * with  <html data-layout="…">  (see layouts.css).
+ */
+
+/* ---------- Classic Islamic Blue (default, matches the reference) ---------- */
+:root,
+[data-theme="islamic-blue"] {
+  --sb-1: #0b66d0;  --sb-2: #0a4ea6;
+  --sb-row-line: rgba(2, 28, 82, .55);
+  --sb-current-bg: rgba(3, 38, 104, .82);
+  --iqamah-pill: rgba(2, 22, 68, .62);
+  --accent: #ffd400;
+  --name-gold: #f7d230;  --name-rest: #ffffff;
+  --hdr-bg: rgba(74, 101, 133, .97);  --hdr-bg-solid: #4a6585;
+  --date-1: #06214a;  --date-2: #0b6ed9;
+  --pill-cap-1: #1a7ff0;  --pill-cap-2: #0a52b4;
+  --clock-ring: #0b5bb8;  --clock-glow: #2b96ff;
+  --clock-face-1: #0b66cf;  --clock-face-2: #04285a;
+  --clock-hand: #ffffff;  --clock-num: #ffffff;
+  --frame-1: #a67a1c;  --frame-2: #f4e19b;
+  --ticker-bg: #000;  --ticker-text: #fff;
+  --cream: #efe3c0;  --cream-line: #d8c68f;
+  --navy: #1f3d7a;
+}
+
+/* ---------- Royal Gold ---------- */
+[data-theme="royal-gold"] {
+  --sb-1: #7a5200;  --sb-2: #4d3300;
+  --sb-row-line: rgba(30, 18, 0, .55);
+  --sb-current-bg: rgba(25, 15, 0, .72);
+  --iqamah-pill: rgba(25, 15, 0, .6);
+  --accent: #ffe14d;
+  --name-gold: #ffd700;  --name-rest: #fff9e6;
+  --hdr-bg: rgba(58, 40, 8, .96);  --hdr-bg-solid: #3a2808;
+  --date-1: #1e1400;  --date-2: #9a6b00;
+  --pill-cap-1: #d4a017;  --pill-cap-2: #8a6200;
+  --clock-ring: #8a6200;  --clock-glow: #ffd24d;
+  --clock-face-1: #7a5200;  --clock-face-2: #2c1d00;
+  --ticker-bg: #140d00;  --ticker-text: #ffe9a8;
+  --navy: #4d3300;
+}
+
+/* ---------- Emerald Green ---------- */
+[data-theme="emerald-green"] {
+  --sb-1: #0f8a4b;  --sb-2: #09663a;
+  --sb-row-line: rgba(0, 40, 20, .55);
+  --sb-current-bg: rgba(0, 50, 26, .78);
+  --iqamah-pill: rgba(0, 40, 20, .6);
+  --accent: #ffe14d;
+  --name-gold: #f7d230;  --name-rest: #ffffff;
+  --hdr-bg: rgba(18, 70, 52, .96);  --hdr-bg-solid: #124634;
+  --date-1: #04271a;  --date-2: #0f8a4b;
+  --pill-cap-1: #19a65e;  --pill-cap-2: #0a6a3a;
+  --clock-ring: #0a6a3a;  --clock-glow: #3ddc84;
+  --clock-face-1: #0f8a4b;  --clock-face-2: #04301d;
+  --ticker-bg: #020d08;  --ticker-text: #d3f5df;
+  --navy: #0c5a34;
+}
+
+/* ---------- Modern Dark ---------- */
+[data-theme="modern-dark"] {
+  --sb-1: #23232c;  --sb-2: #15151b;
+  --sb-row-line: rgba(255, 255, 255, .07);
+  --sb-current-bg: rgba(187, 134, 252, .16);
+  --iqamah-pill: rgba(255, 255, 255, .08);
+  --accent: #c9a0ff;
+  --name-gold: #c9a0ff;  --name-rest: #f0f0f5;
+  --hdr-bg: rgba(18, 18, 24, .95);  --hdr-bg-solid: #121218;
+  --date-1: #0b0b10;  --date-2: #3a2a5e;
+  --pill-cap-1: #7e57c2;  --pill-cap-2: #4a2d8a;
+  --clock-ring: #2f2f3a;  --clock-glow: #a97bff;
+  --clock-face-1: #2a2a36;  --clock-face-2: #0f0f14;
+  --ticker-bg: #000;  --ticker-text: #d8c4ff;
+  --navy: #2a2a4a;
+}
+
+/* ---------- White & Gold ---------- */
+[data-theme="white-gold"] {
+  --sb-1: #fbf6e6;  --sb-2: #efe4c0;
+  --sb-row-line: rgba(140, 105, 20, .3);
+  --sb-current-bg: rgba(200, 151, 42, .28);
+  --iqamah-pill: rgba(140, 105, 20, .18);
+  --accent: #8a5d00;
+  --name-gold: #f3c43a;  --name-rest: #ffffff;
+  --hdr-bg: rgba(60, 50, 30, .93);  --hdr-bg-solid: #3c321e;
+  --date-1: #3d2f0a;  --date-2: #c8972a;
+  --pill-cap-1: #d9a830;  --pill-cap-2: #a67a1c;
+  --clock-ring: #c8972a;  --clock-glow: #ffe08a;
+  --clock-face-1: #f7efd5;  --clock-face-2: #e3d3a0;
+  --clock-hand: #3a2c08;  --clock-num: #3a2c08;
+  --ticker-bg: #3d2f0a;  --ticker-text: #ffe9a8;
+  --navy: #5a4410;
+}
+[data-theme="white-gold"] #sidebar,
+[data-theme="white-gold"] .prayer-item,
+[data-theme="white-gold"] .p-icon { color: #3a2c08; }
+[data-theme="white-gold"] .prayer-item.current,
+[data-theme="white-gold"] .prayer-item.current .p-icon { color: var(--accent-ink, #fff); }

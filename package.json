@@ -1,0 +1,10 @@
+{
+  "name": "masjid-display",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Masjid digital display — static site + tiny Vercel API (Vercel Blob storage)",
+  "dependencies": {
+    "@vercel/blob": "^1.0.0"
+  }
+}

@@ -1,0 +1,384 @@
+/**
+ * screens.css — full-screen screens that appear around each prayer:
+ *   1. Time to Athan  (progress bar  or  animated globe)
+ *   2. Athan
+ *   3. Towards Iqamah (cream screen with big countdown)
+ *   4. Iqamah         (prayer is starting)
+ *   5. Jummah         (Friday information screen)
+ * They live inside the gold frame, so they inherit the same border.
+ */
+
+.full-overlay {
+  position: absolute; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .7s ease;
+}
+.full-overlay.active { opacity: 1; pointer-events: all; }
+
+.gold-text {
+  background: linear-gradient(180deg, #fff2b0 0%, #e2bd4a 42%, #9a7414 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ============================================================
+   1) TIME TO ATHAN — progress style
+   ============================================================ */
+#preAthanOverlay {
+  background:
+    radial-gradient(ellipse at 50% 38%, #151515 0%, #050505 60%, #000 100%);
+}
+.pa-wrap { text-align: center; width: 100%; }
+.pa-title {
+  font-size: 66px; font-weight: 400; letter-spacing: 1px;
+  color: #fff;
+}
+.pa-name {
+  font-size: 236px; font-weight: 800; line-height: 1.02;
+  letter-spacing: 10px; text-transform: uppercase;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.7));
+  white-space: nowrap;
+}
+.pa-bar {
+  position: relative;
+  width: 860px; height: 108px;
+  margin: 34px auto 0;
+  border-radius: 54px;
+  border: 6px solid #cda83a;
+  background: linear-gradient(180deg, #f6ecc2, #dccb8c);
+  box-shadow: inset 0 3px 8px rgba(0,0,0,.25), 0 0 0 3px rgba(0,0,0,.6), 0 10px 30px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.pa-fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: repeating-linear-gradient(135deg, #3568e8 0 24px, #2750c8 24px 48px);
+  background-size: 68px 100%;
+  animation: stripes 1.4s linear infinite;
+  transition: width 1s linear;
+  border-radius: 0 40px 40px 0;
+  box-shadow: inset 0 -10px 18px rgba(0,0,40,.25), inset 0 8px 14px rgba(255,255,255,.25);
+}
+@keyframes stripes { to { background-position: 68px 0; } }
+.pa-count {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 78px; font-weight: 700; color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 3px 6px rgba(0,0,0,.65);
+}
+
+/* ============================================================
+   1b) TIME TO ATHAN — globe style
+   ============================================================ */
+#preAthanOverlay.globe-style { background: #000; justify-content: flex-start; align-items: flex-end; }
+#globeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pg-text { position: relative; z-index: 2; padding: 0 0 70px 80px; text-align: left; text-shadow: 0 4px 18px rgba(0,0,0,.8); }
+.pg-sub { font-size: 26px; letter-spacing: 9px; font-weight: 600; color: #e9eef7; margin-bottom: 4px; }
+.pg-name { text-shadow: none; font-size: 112px; font-weight: 800; letter-spacing: 3px; line-height: 1.05; text-transform: uppercase; filter: drop-shadow(0 4px 10px rgba(0,0,0,.7)); }
+.pg-count { font-size: 76px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.pg-progress {
+  position: absolute; z-index: 2; right: 90px; bottom: 34px;
+  width: 560px; height: 7px; border-radius: 4px; background: rgba(255,255,255,.18);
+}
+.pg-progress i { display: block; height: 100%; width: 0; border-radius: 4px; background: #3d6fff; transition: width 1s linear; }
+
+/* ============================================================
+   2) ATHAN
+   ============================================================ */
+#athanOverlay {
+  background: radial-gradient(ellipse at 50% 40%, #181410 0%, #070605 62%, #000 100%);
+  background-size: cover; background-position: center;
+}
+.athan-bg-dark { position: absolute; inset: 0; background: rgba(0,0,0,.55); pointer-events: none; }
+.athan-content { position: relative; z-index: 1; text-align: center; width: 100%; padding: 0 80px; }
+.athan-star-row { font-size: 30px; color: rgba(226,189,74,.5); letter-spacing: 18px; margin-bottom: 8px; }
+.athan-arabic {
+  font-family: var(--font-arabic);
+  font-size: 230px; line-height: 1.05; direction: rtl;
+  animation: glow-gold 3s ease-in-out infinite;
+}
+.athan-title { font-size: 34px; letter-spacing: 20px; color: rgba(255,255,255,.7); margin: 8px 0 14px; text-indent: 20px; }
+.athan-prayer-name { font-size: 170px; font-weight: 800; line-height: 1; letter-spacing: 6px; text-transform: uppercase; }
+.athan-prayer-name-ar { font-size: 70px; color: #e2bd4a; margin: 6px 0 4px; font-family: var(--font-arabic); }
+.athan-time-wrap { margin: 14px 0; display: flex; justify-content: center; align-items: baseline; gap: 20px; }
+.athan-time-label { font-size: 26px; letter-spacing: 4px; color: rgba(255,255,255,.55); text-transform: uppercase; }
+.athan-time { font-size: 80px; font-weight: 300; letter-spacing: 6px; font-variant-numeric: tabular-nums; }
+.athan-divider { display: flex; align-items: center; gap: 18px; margin: 18px auto; max-width: 560px; }
+.athan-divider-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #e2bd4a, transparent); display: block; }
+.athan-divider-diamond { color: #e2bd4a; font-size: 22px; }
+.athan-message { font-size: 42px; color: #f0d98a; font-style: italic; margin-bottom: 14px; }
+.athan-pattern { font-size: 28px; color: rgba(226,189,74,.4); letter-spacing: 14px; }
+.athan-mosque-name { font-size: 26px; color: rgba(255,255,255,.4); letter-spacing: 3px; margin-top: 12px; }
+@keyframes glow-gold {
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(226,189,74,.35)); }
+  50%      { filter: drop-shadow(0 0 40px rgba(226,189,74,.85)); }
+}
+
+/* ============================================================
+   3) TOWARDS IQAMAH  (cream screen)  +  4) IQAMAH
+   ============================================================ */
+#iqamahOverlay {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='none' stroke='%23c9b46f' stroke-width='1.3' opacity='.55'%3E%3Crect x='35' y='35' width='80' height='80'/%3E%3Crect x='35' y='35' width='80' height='80' transform='rotate(45 75 75)'/%3E%3Ccircle cx='75' cy='75' r='20'/%3E%3Ccircle cx='0' cy='0' r='24'/%3E%3Ccircle cx='150' cy='0' r='24'/%3E%3Ccircle cx='0' cy='150' r='24'/%3E%3Ccircle cx='150' cy='150' r='24'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 150px 150px,
+    radial-gradient(ellipse at 50% 45%, #f7eed2 0%, #ecdcaf 70%, #dcc88e 100%);
+  color: var(--navy);
+}
+#iqamahOverlay::after {          /* thin inner gold line */
+  content: ''; position: absolute; inset: 14px;
+  border: 4px solid #b98f20; border-radius: 6px; pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5);
+}
+.iq-wrap { text-align: center; width: 100%; position: relative; z-index: 1; }
+.iq-prayer { font-size: 40px; letter-spacing: 12px; font-weight: 700; color: #8f6a14; text-transform: uppercase; margin-bottom: 4px; }
+.iq-title {
+  font-size: 112px; font-weight: 800; letter-spacing: 3px; line-height: 1.05;
+  background: linear-gradient(90deg, #c8b67a 0%, #a8862c 45%, #8e6a14 60%, #c8b67a 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+  text-transform: uppercase;
+}
+.iq-timer {
+  font-family: var(--font-cond);
+  font-size: 360px; font-weight: 700; line-height: .98;
+  color: var(--navy);
+  -webkit-text-stroke: 9px #fff; paint-order: stroke fill;
+  text-shadow: 0 10px 0 rgba(0,0,0,.12);
+  letter-spacing: 6px;
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 18px;
+}
+.iq-timer.urgent { color: #b3261e; animation: urgent 1s ease-in-out infinite; }
+@keyframes urgent { 50% { opacity: .65; } }
+.iq-pill {
+  position: relative; overflow: hidden;
+  width: 1080px; height: 112px; margin: 0 auto;
+  border-radius: 56px;
+  border: 6px solid #c9a227;
+  background: linear-gradient(180deg, #ffffff, #e9e9e9);
+  box-shadow: 0 8px 22px rgba(0,0,0,.28), inset 0 0 0 3px rgba(255,255,255,.7);
+  display: flex; align-items: center;
+}
+.iq-marquee {
+  display: inline-block; white-space: nowrap;
+  font-size: 52px; font-weight: 800; color: #111;
+  will-change: transform;
+  animation: iqmarquee var(--iq-dur, 22s) linear infinite;
+}
+.iq-marquee span { padding: 0 60px; }
+@keyframes iqmarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Iqamah (prayer starting) */
+.iq-now-ar { font-family: var(--font-arabic); font-size: 190px; line-height: 1.05; color: #9a7414; }
+.iq-now-title { font-size: 220px; font-weight: 800; letter-spacing: 14px; line-height: 1; color: var(--navy); -webkit-text-stroke: 7px #fff; paint-order: stroke fill; animation: urgent 1.6s ease-in-out infinite; }
+.iq-now-prayer { font-size: 70px; font-weight: 600; letter-spacing: 6px; color: #8f6a14; margin-top: 8px; text-transform: uppercase; }
+.iq-now-sub { font-size: 44px; font-style: italic; color: #5b4a1a; margin-top: 18px; }
+
+/* ============================================================
+   5) JUMMAH
+   ============================================================ */
+#jummahOverlay {
+  background: linear-gradient(135deg, #0d2137 0%, #1a4a2e 50%, #0d2137 100%);
+  background-size: cover; background-position: center;
+  overflow-y: auto;
+}
+.jummah-bg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.6); pointer-events: none; }
+.jummah-content { position: relative; z-index: 1; width: 100%; max-width: 1500px; padding: 28px 60px; text-align: center; }
+.jummah-header { display: flex; align-items: center; justify-content: center; gap: 36px; margin-bottom: 18px; }
+.jummah-logo { width: 140px; height: 140px; border-radius: 50%; object-fit: contain; }
+.jummah-greeting { font-family: var(--font-arabic); font-size: 110px; direction: rtl; line-height: 1.1; color: #f4cf5a; animation: glow-gold 3.5s ease-in-out infinite; }
+.jummah-greeting-en { font-size: 56px; font-weight: 800; letter-spacing: 8px; margin-top: 4px; }
+.jummah-mosque-name { font-size: 32px; font-weight: 700; color: #f4cf5a; margin-top: 8px; }
+.jummah-mosque-address { font-size: 22px; color: rgba(255,255,255,.65); }
+.jummah-divider { display: flex; align-items: center; gap: 16px; margin: 16px auto; max-width: 640px; }
+.jummah-line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #e2bd4a, transparent); }
+.jummah-diamond { width: 14px; height: 14px; background: #e2bd4a; transform: rotate(45deg); }
+.jummah-date { font-size: 28px; color: rgba(255,255,255,.8); margin-bottom: 16px; }
+.jummah-topic-box { background: rgba(226,189,74,.12); border: 2px solid rgba(226,189,74,.35); border-radius: 18px; padding: 16px 42px; display: inline-block; margin-bottom: 18px; }
+.jummah-label { font-size: 16px; letter-spacing: 4px; color: rgba(255,255,255,.5); text-transform: uppercase; margin-bottom: 6px; }
+.jummah-topic { font-size: 44px; font-weight: 700; }
+.jummah-speaker-section { display: flex; align-items: center; justify-content: center; gap: 22px; margin-bottom: 20px; }
+.jummah-speaker-photo { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid #f4cf5a; }
+.jummah-speaker-info { text-align: left; }
+.jummah-khateeb { font-size: 34px; font-weight: 600; color: #f4cf5a; }
+.jummah-times { display: flex; align-items: center; justify-content: center; gap: 34px; background: rgba(10,30,60,.6); border: 2px solid rgba(226,189,74,.35); border-radius: 20px; padding: 20px 52px; margin-bottom: 16px; }
+.jummah-time-label { font-size: 16px; letter-spacing: 3px; color: rgba(255,255,255,.5); text-transform: uppercase; margin-bottom: 6px; }
+.jummah-time-value { font-size: 52px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.jummah-time-divider { font-size: 28px; color: rgba(226,189,74,.45); }
+.jummah-countdown { font-size: 30px; color: rgba(244,207,90,.85); font-style: italic; margin-bottom: 12px; min-height: 40px; }
+.islamic-pattern-line { font-size: 26px; color: rgba(226,189,74,.4); letter-spacing: 12px; margin-bottom: 8px; }
+.jummah-phone { font-size: 24px; color: rgba(255,255,255,.55); }
+
+/* ============================================================
+   GLASS SLIDES  (glossy + transparent: the mosque photo shows through)
+   Digital clock · Next prayer · Hadith / Quran / Dua · Announcement
+   ============================================================ */
+.slide-item {
+  border: 1.5px solid rgba(255,255,255,.60) !important;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.07) 40%, rgba(255,255,255,.02) 68%, rgba(255,255,255,.10) 100%),
+    rgba(10, 50, 120, .42) !important;                         /* fallback */
+  background:
+    linear-gradient(160deg, rgba(255,255,255,.26) 0%, rgba(255,255,255,.07) 40%, rgba(255,255,255,.02) 68%, rgba(255,255,255,.10) 100%),
+    color-mix(in srgb, var(--sb-2) 46%, transparent) !important;
+  box-shadow:
+    0 18px 44px rgba(0,0,0,.40),
+    0 0 0 1px rgba(0,0,0,.22),
+    inset 0 2px 1px rgba(255,255,255,.70),
+    inset 0 -16px 36px rgba(0,0,0,.14),
+    inset 0 0 50px rgba(160,205,255,.14) !important;
+  backdrop-filter: blur(20px) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.6) !important;
+}
+.slide-item::before { background: none !important; }          /* no flat dark veil */
+/* curved glass sheen across the top half */
+.slide-item::after {
+  content: ''; position: absolute; left: -10%; right: -10%; top: -2px; height: 50%;
+  border-radius: 0 0 50% 50% / 0 0 38% 38%;
+  background: linear-gradient(180deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.08) 70%, rgba(255,255,255,0) 100%);
+  pointer-events: none; z-index: 0;
+}
+.slide-item { --streak: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.30) 50%, transparent 60%); }
+.slide-item > *:first-child { position: relative; z-index: 1; }
+@keyframes gloss-sweep { from { background-position: -160% 0; } to { background-position: 260% 0; } }
+.slide-item .slide-content, .slide-item .slide-announcement {
+  background: var(--streak) no-repeat; background-size: 55% 100%;
+  animation: gloss-sweep 4.5s ease-in-out .6s 1;
+}
+/* the photo shows through, so keep every text crisp
+   (gradient-filled text uses drop-shadow filters instead: a text-shadow would show through the clipped fill) */
+.slide-item { text-shadow: 0 2px 8px rgba(0,0,0,.65); }
+.cs-hm, .np-en, .slide-ann-title { text-shadow: none !important; }
+.slide-translation, .slide-tamil, .slide-ann-desc { text-shadow: 0 2px 8px rgba(0,0,0,.75) !important; }
+
+.slide-arabic {
+  background: linear-gradient(180deg, #fff6cf 0%, #ffd65a 45%, #c98f12 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: none !important;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,.65)) drop-shadow(0 0 14px rgba(255,205,80,.35));
+}
+.slide-source {
+  display: inline-block; padding: 4px 22px; border-radius: 30px; font-style: normal !important;
+  color: rgba(255,255,255,.95) !important; letter-spacing: .3px;
+  background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.06));
+  border: 1px solid rgba(255,255,255,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+}
+.slide-ann-title {
+  background: linear-gradient(180deg, #fff6cf, #ffd65a 50%, #c98f12);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+/* type tints */
+.slide-hadith   { --tint: rgba(255,190,60,.12); }
+.slide-quran    { --tint: rgba(60,220,140,.14); }
+.slide-dua      { --tint: rgba(190,130,255,.14); }
+.slide-reminder { --tint: rgba(255,110,110,.14); }
+.slide-hadith, .slide-quran, .slide-dua, .slide-reminder {
+  box-shadow: inset 0 0 120px var(--tint), 0 18px 44px rgba(0,0,0,.40), inset 0 2px 1px rgba(255,255,255,.70), inset 0 -16px 36px rgba(0,0,0,.14) !important;
+}
+
+/* ── Digital clock slide: compact glossy panel next to the analog clock ── */
+.slide-item.slide-clockk, .slide-item.slide-nextp {
+  inset: auto; left: 0; top: 50%; height: 440px; width: min(1000px, 100%); margin-top: -220px;
+  border-radius: 40px;
+}
+.clock-slide { text-align: center; }
+.cs-time {
+  display: flex; justify-content: center; align-items: baseline; gap: 14px;
+  font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1;
+}
+.cs-hm {
+  font-size: 210px; letter-spacing: -4px;
+  background: linear-gradient(180deg, #ffffff 0%, #dbe9ff 45%, #8fb8f0 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.55));
+}
+.cs-sec  { font-size: 84px; color: var(--accent); text-shadow: 0 3px 8px rgba(0,0,0,.5); }
+.cs-ampm { font-size: 70px; color: #fff; opacity: .9; text-shadow: 0 3px 8px rgba(0,0,0,.5); }
+.cs-date  { font-size: 44px; font-weight: 600; margin-top: 14px; text-shadow: 0 2px 6px rgba(0,0,0,.6); }
+.cs-hijri { font-size: 36px; color: var(--accent); margin-top: 6px; text-shadow: 0 2px 6px rgba(0,0,0,.6); }
+.cs-next  { font-size: 30px; margin-top: 12px; opacity: .85; }
+.cs-next:empty { display: none; }
+
+/* Signature: keep the slide area clear of the analog clock */
+[data-layout="signature"] #slideshowContainer {
+  left: calc(var(--sb-w) + var(--clock-d) / 2 + 18px);
+  right: 38px;
+}
+[data-layout="signature"] .slide-item { padding: 24px 34px; }
+[data-layout="signature"] .slide-arabic { font-size: 50px; line-height: 1.6; }
+[data-layout="signature"] .slide-translation { font-size: 29px; }
+[data-layout="signature"] .slide-tamil { font-size: 23px; }
+[data-layout="signature"] .slide-source { font-size: 20px; }
+[data-layout="signature"] .slide-item.slide-clockk, [data-layout="signature"] .slide-item.slide-nextp { height: 400px; margin-top: -200px; width: 100%; }
+[data-layout="signature"] .cs-hm { font-size: 160px; }
+[data-layout="signature"] .cs-sec { font-size: 62px; }
+[data-layout="signature"] .cs-ampm { font-size: 50px; }
+[data-layout="signature"] .cs-date { font-size: 38px; }
+[data-layout="signature"] .cs-hijri { font-size: 32px; }
+[data-layout="signature"] .cs-next { font-size: 26px; }
+
+/* Classic: slides sit to the right of the bottom-left analog clock */
+[data-layout="classic"] #slideshowContainer { left: calc(var(--sb-w) + 22px + 430px * var(--kClock) + 24px); right: 38px; }
+[data-layout="classic"] .slide-item { padding: 24px 34px; }
+[data-layout="classic"] .slide-arabic { font-size: 50px; line-height: 1.6; }
+[data-layout="classic"] .slide-item.slide-clockk, [data-layout="classic"] .slide-item.slide-nextp { width: 100%; height: 400px; margin-top: -200px; }
+[data-layout="classic"] .cs-hm { font-size: 160px; }
+[data-layout="classic"] .cs-sec { font-size: 62px; }
+[data-layout="classic"] .cs-ampm { font-size: 50px; }
+[data-layout="classic"] .cs-date { font-size: 38px; }
+[data-layout="classic"] .cs-hijri { font-size: 32px; }
+
+/* Ultra Wide: slides start to the right of the bottom-left analog clock */
+[data-layout="ultrawide"] #slideshowContainer { left: calc(14px + 430px * var(--kClock) + 30px); right: 50px; }
+[data-layout="ultrawide"] .slide-item { padding: 24px 40px; }
+[data-layout="ultrawide"] .slide-item.slide-clockk, [data-layout="ultrawide"] .slide-item.slide-nextp { width: 100%; height: 420px; margin-top: -210px; }
+[data-layout="ultrawide"] .cs-hm { font-size: 180px; }
+
+/* ── Next prayer slide: Athan + Iqamah ──────────────────────────────────── */
+.nextp-slide { text-align: center; }
+.np-label { font-size: 28px; letter-spacing: 10px; font-weight: 700; text-indent: 10px; color: rgba(255,255,255,.9); }
+.np-name { display: flex; justify-content: center; align-items: baseline; gap: 26px; margin: 4px 0 12px; }
+.np-en { font-size: 96px; font-weight: 800; letter-spacing: 6px; line-height: 1.05; filter: drop-shadow(0 5px 8px rgba(0,0,0,.6)); }
+.np-ar { font-family: var(--font-arabic); font-size: 70px; line-height: 1; color: #fff; text-shadow: 0 3px 8px rgba(0,0,0,.6); }
+.np-times { display: flex; justify-content: center; align-items: center; gap: 22px; }
+.np-box {
+  min-width: 310px; padding: 8px 24px 10px; border-radius: 22px;
+  border: 1.5px solid rgba(255,255,255,.38);
+  background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.04));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 6px 16px rgba(0,0,0,.25);
+}
+.np-box.on { border-color: var(--accent); background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.08)); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 0 26px rgba(255,255,255,.18), 0 6px 16px rgba(0,0,0,.25); }
+.np-box.on .np-cap { color: var(--accent); }
+.np-cap { font-size: 20px; letter-spacing: 7px; text-indent: 7px; font-weight: 700; opacity: .9; }
+.np-val { font-size: 74px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.np-val small { font-size: .36em; font-weight: 700; margin-left: 8px; letter-spacing: 0; opacity: .95; }
+.np-diamond { color: var(--accent); font-size: 26px; }
+.np-count { font-size: 38px; font-weight: 600; margin-top: 10px; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+[data-layout="signature"] .np-label, [data-layout="classic"] .np-label { font-size: 24px; letter-spacing: 8px; }
+[data-layout="signature"] .np-name, [data-layout="classic"] .np-name { margin: 0 0 8px; gap: 20px; }
+[data-layout="signature"] .np-en, [data-layout="classic"] .np-en { font-size: 78px; letter-spacing: 4px; }
+[data-layout="signature"] .np-ar, [data-layout="classic"] .np-ar { font-size: 56px; }
+[data-layout="signature"] .np-box, [data-layout="classic"] .np-box { min-width: 270px; padding: 6px 16px 8px; }
+[data-layout="signature"] .np-val, [data-layout="classic"] .np-val { font-size: 62px; }
+[data-layout="signature"] .np-count, [data-layout="classic"] .np-count { font-size: 32px; margin-top: 6px; }
+
+/* ============================================================
+   6) PICTURE AFTER IQAMAH  (straighten the rows / Jummah picture)
+   ============================================================ */
+#shafOverlay { background: #000; overflow: hidden; }
+.shaf-bg {
+  position: absolute; inset: -60px;
+  background-size: cover; background-position: center;
+  filter: blur(36px) brightness(.5) saturate(1.3);
+}
+.shaf-img {
+  position: relative; z-index: 1;
+  height: calc(100% - 56px); max-width: calc(100% - 120px);
+  object-fit: contain;
+  border-radius: 20px;
+  border: 6px solid #cda83a;
+  box-shadow: 0 24px 70px rgba(0,0,0,.75), 0 0 0 3px rgba(0,0,0,.55), 0 0 60px rgba(205,168,58,.25);
+  animation: fadeInUp .9s cubic-bezier(.16,1,.3,1) both;
+}

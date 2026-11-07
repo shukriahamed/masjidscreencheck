@@ -1,0 +1,22 @@
+/**
+ * responsive.css
+ * The display is drawn on a fixed 1920x1080 canvas and scaled by app.js
+ * (fitStage), so no breakpoints are needed — it looks the same on a 720p
+ * TV, a 4K TV and a laptop. Only a few device quirks live here.
+ */
+
+/* Portrait screens: the canvas is simply scaled to fit the width. */
+
+/* TV remotes / touch screens: no hover effects */
+@media (hover: none) {
+  #adminBtn:hover { background: rgba(0,0,0,.55); }
+}
+
+/* Never print the kiosk */
+@media print {
+  #stage, #adminBtn { display: none !important; }
+  body::before {
+    content: 'Masjid Digital Display System — Powered by SoftSoLab';
+    display: block; text-align: center; margin: 60px auto; font: 20px serif; color: #000;
+  }
+}

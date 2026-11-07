@@ -1,0 +1,27 @@
+{
+  "name": "Masjid Digital Display System",
+  "short_name": "Masjid Display",
+  "description": "Professional mosque Smart TV digital display system by SoftSoLab",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "#1a3a5c",
+  "background_color": "#0d1f3d",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "assets/icons/mosque-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Admin Dashboard",
+      "url": "./admin.html",
+      "description": "Open the admin control panel"
+    }
+  ]
+}
