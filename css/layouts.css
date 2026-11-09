@@ -33,7 +33,6 @@
   bottom: calc(var(--ticker-h) + 24px);
   filter: drop-shadow(0 12px 30px rgba(0,0,0,.55));
 }
-[data-layout="classic"] #nextPrayerCountdown { right: 26px; }
 
 /* ============================================================
    ULTRAWIDE   (bottom strip, clock bottom-left, name tab top-left)
@@ -63,10 +62,6 @@
   text-shadow: 0 2px 6px rgba(0,0,0,.7);
 }
 [data-layout="ultrawide"] .date-dot { display: none; }
-[data-layout="ultrawide"] #nextPrayerCountdown { top: 86px; bottom: auto; right: 30px; height: 62px; }
-[data-layout="ultrawide"] .pill-text { font-size: 36px; line-height: 58px; }
-[data-layout="ultrawide"] .pill-cap { width: 70px; }
-[data-layout="ultrawide"] .pill-cap svg { width: 36px; height: 36px; }
 [data-layout="ultrawide"] #slideshowContainer {
   left: 60px; right: 60px; top: 190px; bottom: calc(var(--ticker-h) + var(--strip-h) + 30px);
 }
@@ -152,9 +147,8 @@
 [data-layout="simplicity"] #mosqueName .n1 { color: #c8972a; }
 [data-layout="simplicity"] #mosqueAddress { color: #46566e; font-size: 20px; }
 [data-layout="simplicity"] .header-icon { display: none; }
-[data-layout="simplicity"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + 200px); }
 [data-layout="simplicity"] #slideshowContainer {
-  left: calc(var(--sb-w) + 50px); top: 200px; right: 50px; bottom: calc(var(--ticker-h) + 290px);
+  left: calc(var(--sb-w) + 50px); top: 200px; right: 50px; bottom: calc(var(--ticker-h) + 190px);
 }
 [data-layout="simplicity"] .credit-top-right { top: auto; bottom: calc(var(--ticker-h) + 10px); left: calc(var(--sb-w) + 20px); right: auto; }
 
@@ -203,17 +197,7 @@
 }
 [data-layout="table"] .header-icon { display: none; }
 [data-layout="table"] #mosqueLogo { height: 104px; width: 104px; }
-[data-layout="table"] #bigCountdown {
-  display: flex; align-items: center; gap: 22px;
-  left: calc(var(--sb-w) + 34px); bottom: calc(var(--ticker-h) + 24px);
-  padding: 12px 34px 12px 24px;
-  border-radius: 20px;
-  background: linear-gradient(180deg, var(--pill-cap-1), var(--pill-cap-2));
-  box-shadow: 0 8px 22px rgba(0,0,0,.5);
-}
-[data-layout="table"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
-[data-layout="table"] .bc-time { font-size: 76px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
-[data-layout="table"] #slideshowContainer { left: calc(var(--sb-w) + 50px); top: 190px; bottom: calc(var(--ticker-h) + 170px); }
+[data-layout="table"] #slideshowContainer { left: calc(var(--sb-w) + 50px); top: 190px; bottom: calc(var(--ticker-h) + 34px); }
 [data-layout="table"] .credit-top-right { top: 168px; }
 
 /* ============================================================
@@ -245,14 +229,7 @@
 [data-layout="minimal"] .date-dot { display: none; }
 [data-layout="minimal"] #clockSection { display: none; }
 [data-layout="minimal"] #prayerList { margin-left: 470px; }
-[data-layout="minimal"] #bigCountdown {
-  display: block; left: 34px; bottom: calc(var(--ticker-h) + 22px);
-  z-index: 9;
-}
-[data-layout="minimal"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
-[data-layout="minimal"] .bc-time { font-size: 92px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 3px 0 rgba(0,0,0,.2); }
-[data-layout="minimal"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + var(--strip-h) + 24px); }
-[data-layout="minimal"] #slideshowContainer { left: 60px; right: 60px; top: 160px; bottom: calc(var(--ticker-h) + var(--strip-h) + 120px); }
+[data-layout="minimal"] #slideshowContainer { left: 60px; right: 60px; top: 160px; bottom: calc(var(--ticker-h) + var(--strip-h) + 34px); }
 [data-layout="minimal"] .credit-top-right { top: 78px; }
 
 
@@ -266,3 +243,31 @@
 }
 [data-layout="signature"] #mosqueName { line-height: 1.1; }
 [data-layout="signature"] #mosqueAddress { margin-top: 6px; }
+
+
+/* ── Countdown pill / big countdown per layout (only visible when switched on) ── */
+[data-layout="classic"] #nextPrayerCountdown { right: 26px; }
+[data-layout="ultrawide"] #nextPrayerCountdown { top: 86px; bottom: auto; right: 30px; height: 62px; }
+[data-layout="ultrawide"] .pill-text { font-size: 36px; line-height: 58px; }
+[data-layout="ultrawide"] .pill-cap { width: 70px; }
+[data-layout="ultrawide"] .pill-cap svg { width: 36px; height: 36px; }
+[data-layout="simplicity"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + 200px); }
+[data-layout="simplicity"][data-pill="on"] #slideshowContainer { bottom: calc(var(--ticker-h) + 290px); }
+
+[data-layout="table"] #bigCountdown {
+  display: flex; align-items: center; gap: 22px;
+  left: calc(var(--sb-w) + 34px); bottom: calc(var(--ticker-h) + 24px);
+  padding: 12px 34px 12px 24px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--pill-cap-1), var(--pill-cap-2));
+  box-shadow: 0 8px 22px rgba(0,0,0,.5);
+}
+[data-layout="table"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
+[data-layout="table"] .bc-time { font-size: 76px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+[data-layout="table"][data-pill="on"] #slideshowContainer { bottom: calc(var(--ticker-h) + 170px); }
+
+[data-layout="minimal"] #bigCountdown { display: block; left: 34px; bottom: calc(var(--ticker-h) + 22px); z-index: 9; }
+[data-layout="minimal"] .bc-label { font-size: 26px; font-weight: 600; opacity: .95; }
+[data-layout="minimal"] .bc-time { font-size: 92px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 3px 0 rgba(0,0,0,.2); }
+[data-layout="minimal"] #nextPrayerCountdown { bottom: calc(var(--ticker-h) + var(--strip-h) + 24px); }
+[data-layout="minimal"][data-pill="on"] #slideshowContainer { bottom: calc(var(--ticker-h) + var(--strip-h) + 120px); }

@@ -273,14 +273,14 @@ html, body {
 #analogClock { width: 100%; height: 100%; display: block; }
 
 /* ============================================================
-   COUNTDOWN PILL  (next prayer)
+   COUNTDOWN PILL  (next prayer) — optional: Admin → Clock → switch
    ============================================================ */
 #nextPrayerCountdown {
   position: absolute; z-index: 6;
   right: 26px;
   bottom: calc(var(--ticker-h) + 22px);
   height: 70px;
-  display: none;            /* shown by app.js */
+  display: none;            /* shown by app.js when the switch is on */
   align-items: stretch;
   border-radius: 40px;
   overflow: hidden;
@@ -305,6 +305,10 @@ html, body {
 .pill-text b { font-weight: 700; font-variant-numeric: tabular-nums; margin-left: 6px; }
 
 #bigCountdown { display: none; position: absolute; z-index: 6; }
+[data-pill="off"] #nextPrayerCountdown, [data-pill="off"] #bigCountdown { display: none !important; }
+
+/* slides leave room for the pill only when it is switched on */
+[data-pill="on"] #slideshowContainer { bottom: calc(var(--ticker-h) + 120px); }
 
 /* ============================================================
    HADITH / ANNOUNCEMENT SLIDES (float over the photo)
@@ -314,7 +318,7 @@ html, body {
   left: calc(var(--sb-w) + 80px);
   right: 44px;
   top: calc(var(--hdr-h) + var(--date-h) + 46px);
-  bottom: calc(var(--ticker-h) + 120px);
+  bottom: calc(var(--ticker-h) + 34px);
   pointer-events: none;
 }
 .slide-item {

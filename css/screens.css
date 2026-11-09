@@ -382,3 +382,34 @@
   box-shadow: 0 24px 70px rgba(0,0,0,.75), 0 0 0 3px rgba(0,0,0,.55), 0 0 60px rgba(205,168,58,.25);
   animation: fadeInUp .9s cubic-bezier(.16,1,.3,1) both;
 }
+
+
+/* ── Admin-adjustable fonts for the Time slide and the Next Prayer slide ── */
+.cs-time { zoom: var(--csTimeK, 1); }
+.cs-date, .cs-hijri, .cs-next { zoom: var(--csDateK, 1); }
+.np-label, .np-name { zoom: var(--npNameK, 1); }
+.np-times { zoom: var(--npTimeK, 1); }
+.np-count { zoom: var(--npCountK, 1); }
+
+
+/* ============================================================
+   SPECIAL SCREENS (Admin → Special Screens)
+   ============================================================ */
+#specialOverlay {
+  background: linear-gradient(135deg, #0d2137 0%, #3a2a0a 55%, #0d2137 100%);
+  background-size: cover; background-position: center;
+}
+.sp-shade { position: absolute; inset: 0; background: rgba(0,0,0,.55); pointer-events: none; }
+.sp-content { position: relative; z-index: 1; width: 100%; max-width: 1500px; padding: 30px 70px; text-align: center; color: #fff; }
+.sp-head { display: flex; align-items: center; justify-content: center; gap: 26px; }
+.sp-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: contain; }
+.sp-logo-ph { display: flex; align-items: center; justify-content: center; font-size: 56px; background: rgba(200,151,42,.15); }
+.sp-mosque { font-size: 40px; font-weight: 700; color: #f4cf5a; }
+.sp-divider { display: flex; align-items: center; gap: 16px; margin: 22px auto; max-width: 700px; }
+.sp-divider span { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, #e2bd4a, transparent); }
+.sp-divider i { width: 14px; height: 14px; background: #e2bd4a; transform: rotate(45deg); }
+.sp-title { font-size: 104px; font-weight: 800; line-height: 1.1; color: #f4cf5a; text-shadow: 0 4px 14px rgba(0,0,0,.6); margin-bottom: 22px; }
+.sp-line { font-size: 46px; line-height: 1.35; margin: 6px 0; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+.sp-time { display: inline-block; margin-top: 26px; padding: 14px 44px; font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: rgba(10,30,60,.6); border: 2px solid rgba(226,189,74,.5); border-radius: 20px; }
+.sp-foot { margin-top: 26px; font-size: 26px; color: rgba(226,189,74,.45); letter-spacing: 12px; }
