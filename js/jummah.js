@@ -32,11 +32,15 @@ const Jummah = (() => {
     if (s.jummahEnabled === false || s.jummahAutoMode === false || !isFriday()) return false;
     const now = new Date();
     const nowM = now.getHours() * 60 + now.getMinutes();
+    // Manual window (Admin → Jummah Mode → "Jummah screen shows from / until"); blank = automatic
+    const mFrom = toMin(s.jummahScreenFrom), mTo = toMin(s.jummahScreenTo);
     const start = toMin(s.jummahKhutbahStart) ?? toMin(s.jummahTime);
     const end = toMin(s.jummahIqamah) ?? toMin(s.jummahTime);
-    if (start === null || end === null) return false;
     const lead = s.jummahLeadMinutes != null ? s.jummahLeadMinutes : 60;
-    return nowM >= start - lead && nowM < end;
+    const from = mFrom !== null ? mFrom : (start === null ? null : start - lead);
+    const until = mTo !== null ? mTo : end;
+    if (from === null || until === null) return false;
+    return nowM >= from && nowM < until;
   }
 
   /** Format a 24-h time string into 12-h display */

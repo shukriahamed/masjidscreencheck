@@ -340,15 +340,25 @@ const Storage = (() => {
   const getToken  = () => { try { return localStorage.getItem('masjidAdminToken') || ''; } catch (e) { return ''; } };
   const setToken  = (t) => { try { t ? localStorage.setItem('masjidAdminToken', t) : localStorage.removeItem('masjidAdminToken'); } catch (e) {} };
   const hasRemote = () => remoteOK;
+  let remoteError = '';
+  const getRemoteError = () => remoteError;
   const warn = (msg) => { console.warn('[sync]', msg); window.dispatchEvent(new CustomEvent('masjid-sync-error', { detail: msg })); };
 
   /** Pull the server copy. Returns true when it differed from what this browser had. */
   async function syncFromServer() {
     try {
       const r = await fetch('/api/state', { cache: 'no-store' });
-      if (!r.ok) return false;
-      const st = await r.json();
-      remoteOK = true;
+      if (!r.ok) {
+        let m = ''; try { m = (await r.json()).error || ''; } catch (e) {}
+        remoteOK = false;
+        remoteError = r.status === 404
+          ? 'The /api folder was not found on this site (404). On Vercel set Root Directory to the folder that contains api/ and redeploy.'
+          : `Server answered ${r.status}${m ? ': ' + m : ''}`;
+        return false;
+      }
+      let st;
+      try { st = await r.json(); } catch (e) { remoteOK = false; remoteError = 'This address does not run the Vercel API (got a web page instead of data).'; return false; }
+      remoteOK = true; remoteError = '';
       if (!st || !st.updatedAt || st.updatedAt === remoteStamp) return false;
 
       lsSet('masjidSettings', st.settings); settingsCache = null;
@@ -367,7 +377,7 @@ const Storage = (() => {
       }
       remoteStamp = st.updatedAt; lsSet('masjidRemoteStamp', remoteStamp);
       return true;
-    } catch (e) { return false; }
+    } catch (e) { remoteOK = false; remoteError = 'Could not reach the server (offline, or opened from a local file).'; return false; }
   }
 
   async function apiFetch(path, opts = {}) {
@@ -609,7 +619,7 @@ const Storage = (() => {
     saveSettings,
     getDefaultSettings,
     saveImage,
-    syncFromServer, pushNow, hasRemote, getToken, setToken,
+    syncFromServer, pushNow, hasRemote, getRemoteError, getToken, setToken,
     getImage,
     deleteImage,
     getAllImages,

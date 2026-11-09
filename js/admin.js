@@ -80,6 +80,7 @@ function checkPin() {
     document.getElementById('adminApp').classList.add('visible');
     initAdminApp();
     askAdminToken();
+    showSyncBanner();
   } else {
     document.getElementById('loginError').textContent = 'Incorrect PIN. Try again.';
     pinInput = '';
@@ -119,6 +120,7 @@ function loadSection(name) {
     case 'clock':      loadClockSettings();       break;
     case 'athan':      loadAthanSettings();       break;
     case 'jummah':     loadJummahSettings();      break;
+    case 'special':    loadSpecialSection();      break;
     case 'wallpaper':  loadWallpaperSection();    break;
     case 'slides':     loadSlidesSection();       break;
     case 'announce':   loadAnnouncementsSection();break;
@@ -208,6 +210,7 @@ async function updateLogoPreview(id) {
 // PRAYER SETTINGS
 // ============================================================
 function loadPrayerSettings() {
+  initBulkPanel();
   const s = Storage.getSettings();
   renderPrayerTable(s.prayers, s);
   setVal('prayerMode', s.prayerMode);
@@ -298,6 +301,79 @@ function onPrayerFieldChange(e) {
 function updateAutoModeVisibility(mode) {
   const autoPanel = document.getElementById('autoPrayerPanel');
   if (autoPanel) autoPanel.style.display = mode === 'auto' ? '' : 'none';
+  const bulkPanel = document.getElementById('bulkPrayerPanel');
+  if (bulkPanel) bulkPanel.style.display = mode === 'table' ? '' : 'none';
+  if (mode === 'table') renderBulkStatus();
+}
+
+// ---------- Bulk Athan table (ACJU / any yearly timetable) ----------
+function renderBulkStatus(extra) {
+  const el = document.getElementById('bulkStatus');
+  if (!el) return;
+  const s = Storage.getSettings();
+  const keys = Object.keys(s.prayerTable || {}).sort();
+  let html = keys.length
+    ? `<b>${keys.length}</b> day${keys.length === 1 ? '' : 's'} stored (${keys[0]} … ${keys[keys.length - 1]}).${s.prayerTable[keys[0]].length === 7 ? ' Asr: ' + (s.tableAsr === 'hanafi' ? 'Hanafi' : 'Shafi\'i') + '.' : ''}`
+    : 'No days stored yet — until you add some, the manual Athan times below are used.';
+  const today = PrayerTimes.tableTimesFor(s, new Date());
+  if (today) html += ` Today: ${['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(id => (today[id] || '--') ).join(' · ')}`;
+  else if (keys.length) html += ' <span style="color:#e8a23a">Today is not in the table — manual times are used for today.</span>';
+  if (extra) html += '<br>' + extra;
+  el.innerHTML = html;
+}
+
+function bulkImport(replace) {
+  const text = document.getElementById('bulkTimesInput').value;
+  const r = PrayerTimes.parseBulkTimes(text);
+  if (!r.count) { renderBulkStatus('<span style="color:#e05a5a">Nothing imported. ' + (r.errors[0] || 'Paste some lines first.') + '</span>'); return; }
+  const s = Storage.getSettings();
+  s.prayerTable = replace ? r.table : Object.assign({}, s.prayerTable || {}, r.table);
+  Storage.saveSettings(s);
+  broadcastUpdate();
+  const errs = r.errors.length
+    ? `<span style="color:#e8a23a">${r.errors.length} line(s) skipped:</span><br>` + r.errors.slice(0, 8).map(e => '• ' + e).join('<br>') + (r.errors.length > 8 ? '<br>…' : '')
+    : '';
+  renderBulkStatus(`<span style="color:#3fb37f">Imported ${r.count} day(s).</span> ${errs}`);
+  showToast(`Imported ${r.count} day(s)${r.errors.length ? `, ${r.errors.length} skipped` : ''}`, r.errors.length ? 'error' : 'success', 4000);
+  if (!r.errors.length) document.getElementById('bulkTimesInput').value = '';
+}
+
+function initBulkPanel() {
+  const $ = id => document.getElementById(id);
+  if (!$('bulkAddBtn') || $('bulkAddBtn')._bound) return;
+  $('bulkAddBtn')._bound = true;
+  $('tableAsrSel').value = Storage.getSettings().tableAsr || 'shafi';
+  $('tableAsrSel').addEventListener('change', () => {
+    const s = Storage.getSettings(); s.tableAsr = $('tableAsrSel').value;
+    Storage.saveSettings(s); broadcastUpdate(); renderBulkStatus();
+  });
+  $('bulkAcjuBtn').addEventListener('click', async () => {
+    if (!confirm('Replace the stored table with the built-in ACJU timetable for Zone 04 (Mannar & Puttalam districts)?')) return;
+    try {
+      const r = await fetch('data/acju-zone04-mannar-puttalam.txt', { cache: 'no-store' });
+      if (!r.ok) throw new Error('file not found');
+      $('bulkTimesInput').value = await r.text();
+      bulkImport(true);
+    } catch (e) { renderBulkStatus('<span style="color:#e05a5a">Could not load the ACJU file (' + e.message + ').</span>'); }
+  });
+  $('bulkAddBtn').addEventListener('click', () => bulkImport(false));
+  $('bulkReplaceBtn').addEventListener('click', () => {
+    if (confirm('Replace the whole stored table with what is pasted above?')) bulkImport(true);
+  });
+  $('bulkClearBtn').addEventListener('click', () => {
+    if (!confirm('Delete every stored day?')) return;
+    const s = Storage.getSettings(); s.prayerTable = {}; Storage.saveSettings(s); broadcastUpdate(); renderBulkStatus();
+  });
+  $('bulkDownloadBtn').addEventListener('click', () => {
+    const blob = new Blob([PrayerTimes.bulkToText(Storage.getSettings())], { type: 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'masjid-prayer-times.csv'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+  $('bulkFileInput').addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    $('bulkTimesInput').value = await f.text(); e.target.value = '';
+    showToast('File loaded — press Add / Update', 'success');
+  });
 }
 
 function savePrayerMode() {
@@ -309,6 +385,7 @@ function savePrayerMode() {
   s.longitude        = parseFloat(getVal('lngInput')) || 79.9000;
   Storage.saveSettings(s);
   updateAutoModeVisibility(s.prayerMode);
+  PrayerTimes.ensureTable().then(() => renderBulkStatus());
   broadcastUpdate();
   showToast('Prayer mode saved!', 'success');
 }
@@ -388,7 +465,15 @@ function loadClockSettings() {
   setVal('hijriOffsetInput', s.hijriOffset || 0);
   setVal('sunriseRangeInput', s.sunriseRangeMinutes != null ? s.sunriseRangeMinutes : 15);
   setVal('slideGapInput', s.slideGapSeconds != null ? s.slideGapSeconds : 10);
-  setChecked('nextPillCheck', s.nextPrayerPill !== false);
+  setChecked('nextPillCheck', s.nextPrayerPill === true);
+  [['csTimeScaleInput','csTimeVal','clockSlideTimeScale'],['csDateScaleInput','csDateVal','clockSlideDateScale'],
+   ['npNameScaleInput','npNameVal','nextSlideNameScale'],['npTimeScaleInput','npTimeVal','nextSlideTimeScale'],
+   ['npCountScaleInput','npCountVal','nextSlideCountScale']].forEach(([i, v, key]) => {
+    setVal(i, s[key] || 100);
+    updateRangeDisplay(i, v, '%');
+    const el = document.getElementById(i);
+    if (el && !el._bound) { el._bound = true; el.addEventListener('input', () => updateRangeDisplay(i, v, '%')); }
+  });
   setVal('clockHandColorPicker', s.clockHandColor || '#c8972a');
   setVal('clockNumberColorPicker', s.clockNumberColor || '#ffffff');
   setVal('clockBorderColorPicker', s.clockBorderColor || '#c8972a');
@@ -405,6 +490,11 @@ function saveClockSettings() {
   { const r = parseInt(getVal('sunriseRangeInput')); s.sunriseRangeMinutes = isNaN(r) ? 15 : r; }
   { const g = parseInt(getVal('slideGapInput'));     s.slideGapSeconds    = isNaN(g) ? 10 : g; }
   s.nextPrayerPill      = getChecked('nextPillCheck');
+  s.clockSlideTimeScale = parseInt(getVal('csTimeScaleInput')) || 100;
+  s.clockSlideDateScale = parseInt(getVal('csDateScaleInput')) || 100;
+  s.nextSlideNameScale  = parseInt(getVal('npNameScaleInput')) || 100;
+  s.nextSlideTimeScale  = parseInt(getVal('npTimeScaleInput')) || 100;
+  s.nextSlideCountScale = parseInt(getVal('npCountScaleInput')) || 100;
   s.clockHandColor      = getVal('clockHandColorPicker');
   s.clockNumberColor    = getVal('clockNumberColorPicker');
   s.clockBorderColor    = getVal('clockBorderColorPicker');
@@ -497,6 +587,8 @@ function loadJummahSettings() {
   setVal('jummahKhateebInput',  s.jummahKhateeb || '');
   setVal('jummahMessageInput',  s.jummahMessage || 'JUMMAH MUBARAK');
   setVal('jummahNameInput',     s.jummahName || 'Jummah');
+  setVal('jummahScreenFromInput', s.jummahScreenFrom || '');
+  setVal('jummahScreenToInput',   s.jummahScreenTo   || '');
   setVal('jummahImageMinutesInput', s.jummahImageMinutes != null ? s.jummahImageMinutes : 20);
 }
 
@@ -511,6 +603,8 @@ function saveJummahSettings() {
   s.jummahKhateeb      = getVal('jummahKhateebInput');
   s.jummahMessage      = getVal('jummahMessageInput');
   s.jummahName         = getVal('jummahNameInput').trim() || 'Jummah';
+  s.jummahScreenFrom   = getVal('jummahScreenFromInput') || '';
+  s.jummahScreenTo     = getVal('jummahScreenToInput') || '';
   { const m = parseInt(getVal('jummahImageMinutesInput')); s.jummahImageMinutes = isNaN(m) ? 20 : Math.max(0, m); }
   Storage.saveSettings(s);
   broadcastUpdate();
@@ -1256,7 +1350,7 @@ function askAdminToken(force) {
   if (!Storage.hasRemote()) return;
   if (Storage.getToken() && !force) return;
   const t = prompt('Admin token (the ADMIN_TOKEN you set on Vercel).\nNeeded to save changes to the server:');
-  if (t) { Storage.setToken(t.trim()); Storage.pushNow(); }
+  if (t) { Storage.setToken(t.trim()); Storage.pushNow().then(showSyncBanner); }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1264,3 +1358,119 @@ document.addEventListener('DOMContentLoaded', async () => {
   await Storage.syncFromServer();     // get the latest settings/images from the server first
   initLogin();
 });
+
+
+// ============================================================
+// SPECIAL SCREENS (occasions)
+// ============================================================
+function loadSpecialSection() {
+  const s = Storage.getSettings();
+  const list = document.getElementById('specialList');
+  if (!list) return;
+  const items = s.specialScreens || [];
+  list.innerHTML = items.length ? '' : '<p class="text-muted">No special screens yet. Press “Add special screen”.</p>';
+  items.forEach(it => {
+    const card = document.createElement('div');
+    card.className = 'admin-card';
+    card.dataset.id = it.id;
+    card.innerHTML = `
+      <div class="toggle-row">
+        <div><div class="toggle-label">${escHtml(it.title || 'Special screen')}</div></div>
+        <label class="toggle-switch"><input type="checkbox" data-f="enabled" ${it.enabled !== false ? 'checked' : ''}><span class="toggle-slider"></span></label>
+      </div>
+      <div class="form-group"><label>Title</label><input class="form-control" type="text" data-f="title" value="${escHtml(it.title || '')}" placeholder="e.g. Eid-ul-Fitr Prayer"></div>
+      <div class="form-group"><label>Message (each line is shown on its own line)</label><textarea class="form-control" rows="3" data-f="message" placeholder="Eid Mubarak! Eid prayer at 6:30 AM at the main hall">${escHtml(it.message || '')}</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>From date (blank = every day)</label><input class="form-control" type="date" data-f="dateFrom" value="${it.dateFrom || ''}"></div>
+        <div class="form-group"><label>To date (blank = same day)</label><input class="form-control" type="date" data-f="dateTo" value="${it.dateTo || ''}"></div>
+        <div class="form-group"><label>Show from (time)</label><input class="form-control" type="time" data-f="timeFrom" value="${it.timeFrom || ''}"></div>
+        <div class="form-group"><label>Show until (time)</label><input class="form-control" type="time" data-f="timeTo" value="${it.timeTo || ''}"></div>
+      </div>
+      <div class="btn-row">
+        <label class="btn btn-secondary" style="margin:0;cursor:pointer">🖼 Background photo<input type="file" accept="image/*" data-f="bgFile" style="display:none"></label>
+        <button class="btn btn-secondary" data-act="clearbg">Remove photo</button>
+        <button class="btn btn-danger" data-act="delete">🗑 Delete</button>
+        <span class="text-muted" style="align-self:center;font-size:12px">${it.bgId ? 'Photo set' : 'No photo (default colours)'}</span>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function updateSpecial(id, fn) {
+  const s = Storage.getSettings();
+  const it = (s.specialScreens || []).find(x => x.id === id);
+  if (!it) return;
+  fn(it, s);
+  Storage.saveSettings(s);
+  broadcastUpdate();
+}
+
+function initSpecialSection() {
+  const list = document.getElementById('specialList');
+  const add = document.getElementById('specialAddBtn');
+  if (!list || !add || add._bound) return;
+  add._bound = true;
+  add.addEventListener('click', () => {
+    const s = Storage.getSettings();
+    s.specialScreens = s.specialScreens || [];
+    s.specialScreens.push({ id: 'sp-' + Date.now(), enabled: true, title: '', message: '', dateFrom: '', dateTo: '', timeFrom: '', timeTo: '', bgId: null });
+    Storage.saveSettings(s); broadcastUpdate(); loadSpecialSection();
+  });
+  list.addEventListener('change', async e => {
+    const el = e.target, card = el.closest('[data-id]');
+    if (!card || !el.dataset.f) return;
+    const id = card.dataset.id, f = el.dataset.f;
+    if (f === 'bgFile') {
+      const file = el.files[0]; if (!file) return;
+      const imgId = 'special-bg-' + Date.now();
+      await Storage.saveImage(imgId, file, { name: file.name });
+      updateSpecial(id, it => { it.bgId = imgId; });
+      showToast('Background uploaded', 'success'); loadSpecialSection(); return;
+    }
+    updateSpecial(id, it => { it[f] = el.type === 'checkbox' ? el.checked : el.value; });
+  });
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('[data-act]'); if (!btn) return;
+    const card = btn.closest('[data-id]'), id = card.dataset.id;
+    if (btn.dataset.act === 'delete') {
+      if (!confirm('Delete this special screen?')) return;
+      const s = Storage.getSettings();
+      s.specialScreens = (s.specialScreens || []).filter(x => x.id !== id);
+      Storage.saveSettings(s); broadcastUpdate(); loadSpecialSection();
+    } else if (btn.dataset.act === 'clearbg') {
+      updateSpecial(id, it => { it.bgId = null; }); loadSpecialSection();
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', initSpecialSection);
+
+
+// ============================================================
+// SERVER SYNC STATUS (so a broken setup is never silent)
+// ============================================================
+function showSyncBanner() {
+  let b = document.getElementById('syncBanner');
+  if (!b) {
+    b = document.createElement('div');
+    b.id = 'syncBanner';
+    b.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:99999;max-width:460px;padding:10px 14px;border-radius:10px;font:13px/1.4 system-ui,sans-serif;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.4);cursor:pointer';
+    document.body.appendChild(b);
+  }
+  if (!Storage.hasRemote()) {
+    b.style.background = '#a33';
+    b.innerHTML = '⚠️ <b>Not connected to the server — changes stay on THIS device only.</b><br>' + escHtml(Storage.getRemoteError() || 'Checking…') + '<br><u>Click to test again</u>';
+    b.onclick = async () => { await Storage.syncFromServer(); showSyncBanner(); };
+  } else if (!Storage.getToken()) {
+    b.style.background = '#b8860b';
+    b.innerHTML = '🔑 Server found, but the <b>admin token</b> is not entered — changes are NOT being saved to the server.<br><u>Click to enter the token</u>';
+    b.onclick = () => { askAdminToken(true); setTimeout(showSyncBanner, 500); };
+  } else {
+    b.style.background = '#1f7a4d';
+    b.innerHTML = '✅ Connected to the server — changes sync to all displays.';
+    b.onclick = null;
+  }
+}
+window.addEventListener('masjid-synced', showSyncBanner);
+window.addEventListener('masjid-auth-failed', () => setTimeout(showSyncBanner, 300));
+window.addEventListener('masjid-sync-error', () => setTimeout(showSyncBanner, 300));
+document.addEventListener('DOMContentLoaded', () => setTimeout(showSyncBanner, 1500));

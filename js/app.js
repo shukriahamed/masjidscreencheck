@@ -78,6 +78,7 @@ const App = (() => {
     const root = document.documentElement;
     root.setAttribute('data-theme', s.theme || 'islamic-blue');
     root.setAttribute('data-layout', s.layout || 'signature');
+    root.setAttribute('data-pill', s.nextPrayerPill === true ? 'on' : 'off');
 
     // Sizes from the admin sliders become unit-less scale factors on the
     // default design, so they work in every layout.
@@ -90,6 +91,12 @@ const App = (() => {
     root.style.setProperty('--kDate',   k(s.dateFontSize, 38));
     root.style.setProperty('--kTickFs', k(s.tickerFontSize, 42));
     root.style.setProperty('--kClock', k(s.clockDiameter, 540));
+    const pct = v => Math.max(0.5, Math.min(2, (Number(v) || 100) / 100));
+    root.style.setProperty('--csTimeK',  pct(s.clockSlideTimeScale));
+    root.style.setProperty('--csDateK',  pct(s.clockSlideDateScale));
+    root.style.setProperty('--npNameK',  pct(s.nextSlideNameScale));
+    root.style.setProperty('--npTimeK',  pct(s.nextSlideTimeScale));
+    root.style.setProperty('--npCountK', pct(s.nextSlideCountScale));
 
     // "Custom" palette: admin colour pickers override the preset
     const custom = ['--sb-1','--sb-2','--hdr-bg','--hdr-bg-solid','--accent','--name-gold','--ticker-bg','--ticker-text','--clock-ring','--clock-face-1'];
@@ -183,7 +190,7 @@ const App = (() => {
   /** Merge today's times (auto mode) and work out Iqamah for every prayer */
   async function buildPrayers(s) {
     let list = (s.prayers || []).map(p => ({ ...p }));
-    if (s.prayerMode === 'auto') {
+    if (s.prayerMode === 'auto' || s.prayerMode === 'table') {
       const today = await PrayerTimes.getTodayTimes();
       list = list.map(p => {
         const athan = (today && today[p.id]) || p.athan;
@@ -357,15 +364,17 @@ const App = (() => {
   }
 
   // ================================================================
-  // NEXT PRAYER COUNTDOWN (pill + big countdown)
+  // NEXT PRAYER COUNTDOWN (pill + big countdown) — optional, off by default
   // ================================================================
   function updateNextPrayerCountdown(now) {
     const pill = document.getElementById('nextPrayerCountdown');
+    const big  = document.getElementById('bigCountdown');
     const bcT = document.getElementById('bcTime'), bcL = document.getElementById('bcLabel');
     if (!pill) return;
 
-    const hide = () => { pill.style.display = 'none'; };
-    if (Countdown.getState() !== Countdown.STATES.NORMAL) return hide();
+    const on = settings.nextPrayerPill === true;
+    const hide = () => { pill.style.display = 'none'; if (big) big.style.display = ''; };
+    if (!on || Countdown.getState() !== Countdown.STATES.NORMAL) return hide();
 
     const list = prayers.filter(p => p.enabled && PrayerTimes.parseTime(p.athan) !== null);
     if (!list.length) return hide();
@@ -383,7 +392,8 @@ const App = (() => {
     setText('pillTime', '-' + txt);
     if (bcT) bcT.textContent = txt;
     if (bcL) bcL.textContent = next.name + ' in';
-    pill.style.display = settings.nextPrayerPill === false ? 'none' : 'flex';
+    pill.style.display = 'flex';
+    if (big) big.style.display = '';
   }
 
   // ================================================================
@@ -391,6 +401,7 @@ const App = (() => {
   // ================================================================
   function syncJummah() {
     if (Countdown.getState() !== Countdown.STATES.NORMAL) return;
+    if (Special.isActive()) { if (Jummah.isActive() && !Jummah.isManual()) Jummah.hideJummahScreen(); return; }
     const want = Jummah.shouldShowJummah();
     if (want && !Jummah.isActive() && !jummahDismissed) Jummah.renderJummahScreen();
     else if (!want && Jummah.isActive() && !Jummah.isManual()) Jummah.hideJummahScreen();
@@ -405,9 +416,10 @@ const App = (() => {
       const now = new Date();
       // Check if any prayer is due NOW
       Countdown.checkPrayerTriggers(prayers, now);
+      updateNextPrayerCountdown(now);
       if (prayers.length && (currentPrayerId(prayers, now) !== renderedCurId ||
           (Jummah.isFriday() && settings.jummahEnabled !== false) !== renderedFriday)) renderPrayerSidebar();
-      updateNextPrayerCountdown(now);
+      Special.sync(Countdown.getState() === Countdown.STATES.NORMAL);
       syncJummah();
       if (Jummah.isActive()) Jummah.updateJummahCountdown();
     }, 1000);
@@ -424,6 +436,7 @@ const App = (() => {
     // Open IndexedDB
     await Storage.openDB();
     await Storage.syncFromServer();     // latest settings/images from the server (no-op offline / local)
+    if (await PrayerTimes.ensureTable()) console.log('[ACJU] timetable loaded from data/');
     settings = Storage.getSettings();
 
     // Fit the canvas to the screen, then apply theme before anything renders

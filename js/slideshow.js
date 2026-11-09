@@ -259,8 +259,8 @@ const Slideshow = (() => {
       q('.cs-ampm').textContent = is24 ? '' : (h >= 12 ? 'PM' : 'AM');
       q('.cs-date').textContent = `${Clock.GREG_DAYS[d.getDay()]}, ${Clock.GREG_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
       q('.cs-hijri').textContent = Clock.hijriString(d, st.hijriOffset);
-      const n = document.getElementById('nextPrayerCountdown');
-      q('.cs-next').textContent = n && n.style.display !== 'none' ? n.innerText.replace(/\s+/g, ' ').trim() : '';
+      const r = relevantPrayer(d);
+      q('.cs-next').textContent = r ? `${r.p.name} ${r.mode === 'athan' ? 'Athan' : 'Iqamah'} in ${hms(r.left)}` : '';
     };
     upd();
     el._tick = setInterval(upd, 1000);
