@@ -7,7 +7,7 @@
  * Run with: npx serve . OR python -m http.server 8080
  */
 
-const CACHE_NAME  = 'masjid-display-v8';
+const CACHE_NAME  = 'masjid-display-v11';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -28,6 +28,7 @@ const STATIC_ASSETS = [
   './js/ticker.js',
   './js/slideshow.js',
   './js/jummah.js',
+  './js/special.js',
   './js/offline.js',
   './js/storage.js',
   './manifest.json',
