@@ -12,7 +12,15 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const id   = String(req.headers['x-id'] || 'file').replace(/[^a-zA-Z0-9_-]/g, '');
       const name = decodeURIComponent(String(req.headers['x-name'] || 'file')).replace(/[^a-zA-Z0-9._-]/g, '_').slice(-60);
-      const blob = await put(`media/${id}-${name}`, req, {
+      // Vercel may already have buffered the body (req.body); otherwise read the stream ourselves
+      let body = req.body;
+      if (!Buffer.isBuffer(body)) {
+        const chunks = [];
+        for await (const c of req) chunks.push(c);
+        body = Buffer.concat(chunks);
+      }
+      if (!body || !body.length) return res.status(400).json({ error: 'Empty upload (no file data received).' });
+      const blob = await put(`media/${id}-${name}`, body, {
         access: 'public',
         addRandomSuffix: true,
         contentType: req.headers['content-type'] || 'application/octet-stream',
@@ -22,10 +30,10 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      const chunks = [];
-      for await (const c of req) chunks.push(c);
-      let body = {};
-      try { body = JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}'); } catch (e) {}
+      let body = req.body;
+      if (Buffer.isBuffer(body)) { try { body = JSON.parse(body.toString('utf8')); } catch (e) { body = {}; } }
+      else if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
+      body = body || {};
       if (body.url && /^https:\/\/[a-z0-9-]+\.public\.blob\.vercel-storage\.com\//.test(body.url)) await del(body.url);
       return res.status(200).json({ ok: true });
     }
@@ -37,4 +45,3 @@ export default async function handler(req, res) {
   }
 }
 
-export const config = { api: { bodyParser: false } };
